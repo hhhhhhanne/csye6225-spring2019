@@ -2,22 +2,41 @@ package edu.neu.xswl.csye6225.controller;
 
 import edu.neu.xswl.csye6225.pojo.Users;
 import edu.neu.xswl.csye6225.service.UserService;
+import edu.neu.xswl.csye6225.utils.CryptPassword;
+import edu.neu.xswl.csye6225.utils.DecodeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
-@RequestMapping("/users")
+import java.util.Date;
+
+@RequestMapping("/")
 @RestController
 public class UserController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = "/test/{id}", method = RequestMethod.GET)
-    public Users getUser(@PathVariable("id") String id){
-        Integer userId = new Integer(id);
-        Users user = userService.getUserById(userId);
-        return user;
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public Date getDate(@RequestHeader(value="token") String token){
+
+        DecodeToken dt = new DecodeToken(token);
+        String username = dt.getUsername();
+        String password = dt.getPassword();
+
+        Users user = userService.getUserByUsername(username);
+        String salt = user.getSalt();
+
+        CryptPassword cp = new CryptPassword();
+        String passwordHash = cp.hashPassword(username, salt);
+
+        if(user.getPassword().equals(passwordHash)) {
+            return new Date();
+        }
+        else {
+
+        }
+
     }
+
+    @RequestMapping(value = "user/regiser", method = RequestMethod.POST)
 }
