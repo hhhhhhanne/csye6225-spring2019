@@ -7,7 +7,8 @@
 | Xiaohan Zhao | | |
 | Changsi Liu | | |
 | Ang Li | 001820694 | li.ang2@husky.neu.edu |
-| Junjie He | | |
+| Junjie He | 001893762 | he.jun@husky.neu.edu |
+| | | |
 
 ## Technology Stack
 
@@ -22,5 +23,3 @@
 
 
 ## CI/CD
-
-
