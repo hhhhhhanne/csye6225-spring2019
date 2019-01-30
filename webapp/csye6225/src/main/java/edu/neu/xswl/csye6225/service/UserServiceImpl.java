@@ -10,11 +10,11 @@ import javax.annotation.Resource;
 public class UserServiceImpl implements UserService {
 
     @Resource
-    private UserDao userMapper;
+    private UserDao userDao;
 
     @Override
     public Users getUserById(int userId) {
-        return userMapper.selectByUserId(userId);
+        return userDao.selectByUserId(userId);
     }
 
 }
