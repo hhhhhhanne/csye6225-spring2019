@@ -12,9 +12,10 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserDao userDao;
 
+
     @Override
     public Users getUserById(int userId) {
         return userDao.selectByUserId(userId);
     }
-
+    
 }
