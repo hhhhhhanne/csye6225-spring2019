@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | Xiaohan Zhao | | |
 | Changsi Liu | | |
-| Ang Li | 001820694 | |
+| Ang Li | 001820694 | li.ang2@husky.neu.edu |
 | Junjie He | | |
 
 ## Technology Stack
