@@ -17,4 +17,35 @@ public class UserServiceImpl implements UserService {
         return userDao.selectByUserId(userId);
     }
 
+    @Override
+    public Users getUserByUsername(String userName) {
+        return userDao.selectByUsername(userName);
+    }
+
+    @Override
+    public void addUser(String userName, String password, String salt) {
+        if (!checkUsername(userName)) {
+            userDao.addUser(userName, password, salt);
+        }
+    }
+
+    @Override
+    public Boolean checkUsername(String userName) {
+        return getUserByUsername(userName) != null;
+    }
+
+    @Override
+    public Boolean checkUser(String username, String password) {
+        Users user = getUserByUsername(username);
+        if (user == null) return null;
+        String salt = user.getSalt();
+        //todo
+
+//        if (password + salt == user.getPassword()) {
+//            return true;
+//        } else return false;
+        return false;
+    }
+
+
 }
