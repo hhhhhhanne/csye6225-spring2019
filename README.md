@@ -5,7 +5,7 @@
 | Name | NEU ID | Email Address |
 | --- | --- | --- |
 | Xiaohan Zhao | | |
-| Changsi Liu | | |
+| Changsi Liu | 001831955 | liu.changsi@husky.neu.edu |
 | Ang Li | 001820694 | li.ang2@husky.neu.edu |
 | Junjie He | 001893762 | he.jun@husky.neu.edu |
 | | | |
