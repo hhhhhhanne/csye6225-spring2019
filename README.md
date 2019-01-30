@@ -4,10 +4,10 @@
 
 | Name | NEU ID | Email Address |
 | --- | --- | --- |
-| | | |
-| | | |
-| | | |
-| | | |
+| Xiaohan Zhao | | |
+| Changsi Liu | | |
+| Ang Li | 001820694 | |
+| Junjie He | | |
 
 ## Technology Stack
 
