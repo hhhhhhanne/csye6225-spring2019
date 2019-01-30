@@ -3,8 +3,8 @@
 ## Team Information
 
 | Name | NEU ID | Email Address |
-| --- | --- | --- |
-| | | |
+|  | --- | --- |
+| Junjie He | 001893762 | he.jun@husky.neu.edu |
 | | | |
 | | | |
 | | | |
@@ -22,5 +22,3 @@
 
 
 ## CI/CD
-
-
