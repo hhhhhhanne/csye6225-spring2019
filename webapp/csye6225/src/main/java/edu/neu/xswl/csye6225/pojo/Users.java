@@ -18,5 +18,7 @@ public class Users implements Serializable {
 
     private String password;
 
-    private String userName;
+    private String username;
+
+    private String salt;
 }
