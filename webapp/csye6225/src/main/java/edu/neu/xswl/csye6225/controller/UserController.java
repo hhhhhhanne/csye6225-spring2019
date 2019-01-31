@@ -9,6 +9,7 @@ import edu.neu.xswl.csye6225.utils.PasswordUtilImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -31,12 +32,16 @@ public class UserController {
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getDate(@RequestHeader(value="token") String token){
-
+        HttpHeaders headers = new HttpHeaders();
         //decode the token
-        DecodeToken dt = new DecodeToken(token);
+        DecodeToken dt;
+        try {
+            dt = new DecodeToken(token);
+        } catch(Exception e) {
+            return new ResponseEntity<>("", headers, HttpStatus.UNAUTHORIZED);
+        }
         String username = dt.getUsername();
         String password = dt.getPassword();
-        HttpHeaders headers = new HttpHeaders();
 
         Users user = userService.getUserByUsername(username);
         String salt = user.getSalt();
@@ -66,6 +71,9 @@ public class UserController {
         //check if password is strong enough
         PasswordUtilImpl passwordAuth = new PasswordUtilImpl();
         HttpHeaders headers = new HttpHeaders();
+        if(null == username || username.equals("") || null == password || password.equals("")) {
+            return new ResponseEntity<>("", headers, HttpStatus.BAD_REQUEST);
+        }
         if(userService.checkUsername(username)) {
             return new ResponseEntity<>("", headers, HttpStatus.CONFLICT);
         }
