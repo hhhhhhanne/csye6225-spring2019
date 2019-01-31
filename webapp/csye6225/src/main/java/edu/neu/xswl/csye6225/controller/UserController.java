@@ -2,10 +2,7 @@ package edu.neu.xswl.csye6225.controller;
 
 import edu.neu.xswl.csye6225.pojo.Users;
 import edu.neu.xswl.csye6225.service.UserService;
-import edu.neu.xswl.csye6225.utils.CryptPassword;
-import edu.neu.xswl.csye6225.utils.DecodeToken;
-import edu.neu.xswl.csye6225.utils.PasswordUtil;
-import edu.neu.xswl.csye6225.utils.PasswordUtilImpl;
+import edu.neu.xswl.csye6225.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -62,14 +59,16 @@ public class UserController {
 
     /**
      * Register
-     * @param username username
+     * @param username username must be a email
      * @param password must be a strong password
      * @return
      */
     @RequestMapping(value = "user/register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@RequestParam(value="username") String username, @RequestParam(value="password") String password) {
         //check if password is strong enough
-        PasswordUtilImpl passwordAuth = new PasswordUtilImpl();
+        PasswordUtil passwordAuth = new PasswordUtilImpl();
+        EmailValidationUtil emailValidationUtil = new EmailValidationUtilImpl();
+
         HttpHeaders headers = new HttpHeaders();
         if(null == username || username.equals("") || null == password || password.equals("")) {
             return new ResponseEntity<>("", headers, HttpStatus.BAD_REQUEST);
@@ -78,6 +77,10 @@ public class UserController {
             return new ResponseEntity<>("", headers, HttpStatus.CONFLICT);
         }
         if(!passwordAuth.isStrongPassword(password)) {
+            return new ResponseEntity<>("", headers, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        if(!emailValidationUtil.isEmail(username)) {
             return new ResponseEntity<>("", headers, HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
