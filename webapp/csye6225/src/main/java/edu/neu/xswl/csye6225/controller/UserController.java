@@ -28,9 +28,11 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getDate(@RequestHeader(value="token", defaultValue = "null") String token){
+    public ResponseEntity<?> getDate(@RequestHeader(value="Authorization", defaultValue = "null") String token){
         HttpHeaders headers = new HttpHeaders();
         //decode the token
+        System.out.println(token);
+        token = token.substring(6);
         HashMap<String, String> responseMessage = new HashMap<>();
         if(token == null || token.length() == 0 || token.equals("null")) {
             responseMessage.put("Warning", "You are not logged in!");
@@ -77,16 +79,27 @@ public class UserController {
 
     /**
      * Register
-     * @param username username must be a email
-     * @param password must be a strong password
      * @return
      */
     @RequestMapping(value = "user/register", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@RequestParam(value="username", defaultValue = "null") String username,
-                                      @RequestParam(value="password", defaultValue = "null") String password) {
+    public ResponseEntity<?> register(@RequestHeader(value="Authorization", defaultValue = "null") String token) {
+
+
+        token = token.substring(6);
+        DecodeToken dt = new DecodeToken(token);
 
         HttpHeaders headers = new HttpHeaders();
         HashMap<String, String> response = new HashMap<>();
+
+        if(!dt.isValid()) {
+            response.put("Warning", "Please enter username or password correctly!");
+            return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
+        }
+
+        String username = dt.getUsername();
+        String password = dt.getPassword();
+
+
 
 
         if(username.equals("null") || password.equals("null")) {
