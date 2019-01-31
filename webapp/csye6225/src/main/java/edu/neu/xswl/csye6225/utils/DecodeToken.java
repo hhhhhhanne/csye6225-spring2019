@@ -4,13 +4,21 @@ import java.util.Base64;
 
 public class DecodeToken {
 
-    public String[] decodedInfo;
+    public String[] decodedInfo = {"", ""};
+    public String decodedString;
 
-    public DecodeToken(String token) {
+    public DecodeToken(String token) throws IllegalArgumentException {
         //Use base64 decoder to decode token and get the username and password
         Base64.Decoder decoder = Base64.getDecoder();
-        String decodedString = new String(decoder.decode(token));
-        this.decodedInfo = decodedString.split(":");
+        this.decodedString = new String(decoder.decode(token));
+    }
+
+    public boolean isValid() {
+        if(!decodedString.contains(":")) return false;
+        else {
+            decodedInfo = decodedString.split(":");
+            return true;
+        }
     }
 
     public String getUsername() {

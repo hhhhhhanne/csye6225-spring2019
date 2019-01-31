@@ -28,17 +28,34 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getDate(@RequestHeader(value="token") String token){
+    public ResponseEntity<?> getDate(@RequestHeader(value="token", defaultValue = "null") String token){
         HttpHeaders headers = new HttpHeaders();
         //decode the token
+        HashMap<String, String> responseMessage = new HashMap<>();
+        if(token == null || token.length() == 0 || token.equals("null")) {
+            responseMessage.put("Warning", "You are not logged in!");
+            return new ResponseEntity<>(responseMessage, headers, HttpStatus.UNAUTHORIZED);
+        }
         DecodeToken dt;
         try {
             dt = new DecodeToken(token);
         } catch(Exception e) {
-            return new ResponseEntity<>("", headers, HttpStatus.UNAUTHORIZED);
+            responseMessage.put("Warning", "You username or password are not correct!");
+            return new ResponseEntity<>(responseMessage, headers, HttpStatus.UNAUTHORIZED);
         }
+
+        if(!dt.isValid()) {
+            responseMessage.put("Warning", "The token is not valid!");
+            return new ResponseEntity<>(responseMessage, headers, HttpStatus.UNAUTHORIZED);
+        }
+
         String username = dt.getUsername();
         String password = dt.getPassword();
+
+        if(username.length() == 0 || password.length() == 0) {
+            responseMessage.put("Warning", "You username or password are not correct!");
+            return new ResponseEntity<>(responseMessage, headers, HttpStatus.UNAUTHORIZED);
+        }
 
         Users user = userService.getUserByUsername(username);
         String salt = user.getSalt();
@@ -53,7 +70,8 @@ public class UserController {
             return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
         }
         else {
-            return new ResponseEntity<>(new Date(), headers, HttpStatus.UNAUTHORIZED);
+            responseMessage.put("Warning", "You username or password are not correct!");
+            return new ResponseEntity<>(responseMessage, headers, HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -64,24 +82,39 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "user/register", method = RequestMethod.POST)
-    public ResponseEntity<?> register(@RequestParam(value="username") String username, @RequestParam(value="password") String password) {
+    public ResponseEntity<?> register(@RequestParam(value="username", defaultValue = "null") String username,
+                                      @RequestParam(value="password", defaultValue = "null") String password) {
+
+        HttpHeaders headers = new HttpHeaders();
+        HashMap<String, String> response = new HashMap<>();
+
+
+        if(username.equals("null") || password.equals("null")) {
+            response.put("Warning", "Please enter username or password!");
+            return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
+        }
+
         //check if password is strong enough
         PasswordUtil passwordAuth = new PasswordUtilImpl();
         EmailValidationUtil emailValidationUtil = new EmailValidationUtilImpl();
 
-        HttpHeaders headers = new HttpHeaders();
+
         if(null == username || username.equals("") || null == password || password.equals("")) {
-            return new ResponseEntity<>("", headers, HttpStatus.BAD_REQUEST);
+            response.put("Warning", "Please enter username or password!");
+            return new ResponseEntity<>(response, headers, HttpStatus.BAD_REQUEST);
         }
         if(userService.checkUsername(username)) {
-            return new ResponseEntity<>("", headers, HttpStatus.CONFLICT);
+            response.put("Warning", "The username already exists!");
+            return new ResponseEntity<>(response, headers, HttpStatus.CONFLICT);
         }
         if(!passwordAuth.isStrongPassword(password)) {
-            return new ResponseEntity<>("", headers, HttpStatus.UNPROCESSABLE_ENTITY);
+            response.put("Warning", "Your password is too weak!");
+            return new ResponseEntity<>(response, headers, HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         if(!emailValidationUtil.isEmail(username)) {
-            return new ResponseEntity<>("", headers, HttpStatus.UNPROCESSABLE_ENTITY);
+            response.put("Warning", "Please use a valid email address as your username");
+            return new ResponseEntity<>(response, headers, HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         //generate salt and crypt the password and store password hash into database
@@ -90,8 +123,8 @@ public class UserController {
         String passwordHash = cp.hashPassword(password, salt);
         System.out.println(username + " " + password);
         userService.addUser(username, passwordHash, salt);
-
-        return new ResponseEntity<>("", headers, HttpStatus.OK);
+        response.put("Message", "You have registered successfully!");
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 
 }
