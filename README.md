@@ -1,5 +1,5 @@
 # CSYE 6225 - Spring 2019
-# for
+
 ## Team Information
 
 | Name | NEU ID | Email Address |
