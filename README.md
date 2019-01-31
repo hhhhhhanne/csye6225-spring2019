@@ -24,28 +24,23 @@
 - Development Environment: Ubuntu
 
 ## Build Instructions
+Clone the repository into a local repository
+
+Use Maven to build:
+<code>$ mvn clean install</code>
+
+run the application by executing:
+<code>$ java -jar target/csye6225-0.0.1-SNAPSHOT.jar</code>
+
+The server will be run at http://localhost:8081/, test can be done using Postman.
 
 ## Deploy Instructions
 MySQL port is default 3306.
 
-run 'npm install' first and run the follow lines in path '/csye6225-spring2018'
-
-Server: server side as RESTful architectural style, responsible for communication with client/admin side. Used JWT achieves authentication system. It is listening at http://localhost:8081/
-
-start server as dev: npm run dev-server   ## Attention, you must run server first, then run client or admin
-
-Client: show the front-end, It is listening at http://localhost:8080/(only admin and server running) or 8081(admin, client, server all running),
-
-start client as dev: npm run dev-client
-
-Admin: application management, provides sign in/sign up modules, It is listening at http://localhost:8080/ or 8081(same as above situations)
-
-start admin as dev: npm run dev-admin
-
-When depoly on AWS, use pm2 to package start server side and admin/client side
+Server: server side as RESTful architectural style.As a default, it is listening at http://localhost:8081/
 
 
 ## Running Tests
-Our test files are in the file "src/test", all the functional tests and module tests are included in this file
+Our test files are in the file "src/test", all the functional tests and module tests are included in this file.
 
 ## CI/CD
