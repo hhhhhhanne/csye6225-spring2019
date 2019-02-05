@@ -8,7 +8,7 @@ public interface UserDao {
 
     Users selectByUserId(Integer userId);
 
-    void addUser(String username, String password, String salt);
+    void addUser(String username, String password);
 
 //    Users selectByUsernameAndPassword(String username,String password);
 }

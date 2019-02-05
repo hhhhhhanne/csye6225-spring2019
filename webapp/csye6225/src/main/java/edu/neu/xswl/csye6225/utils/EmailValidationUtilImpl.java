@@ -1,8 +1,11 @@
 package edu.neu.xswl.csye6225.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class EmailValidationUtilImpl implements  EmailValidationUtil {
     @Override
     public boolean isEmail(String str) {

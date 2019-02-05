@@ -17,6 +17,9 @@ public class DecodeToken {
         if(!decodedString.contains(":")) return false;
         else {
             decodedInfo = decodedString.split(":");
+            if (decodedInfo.length!=2){
+                return false;
+            }
             return true;
         }
     }

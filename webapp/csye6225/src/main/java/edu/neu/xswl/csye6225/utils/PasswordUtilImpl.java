@@ -1,8 +1,11 @@
 package edu.neu.xswl.csye6225.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class PasswordUtilImpl implements PasswordUtil {
 
     private static final int REQUIRED_PASSWORD_LENGTH = 8;
