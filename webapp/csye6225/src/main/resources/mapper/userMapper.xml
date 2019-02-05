@@ -20,7 +20,7 @@
         where username = #{username}
     </select>
     <insert id="addUser" parameterType="edu.neu.xswl.csye6225.pojo.Users">
-        insert into users (username, password,salt) values (#{username}, #{password},#{salt})
+        insert into users (username, password) values (#{param1}, #{param2})
     </insert>
     <!--<select id="selectByUsernameAndPassword" resultType="edu.neu.xswl.csye6225.pojo.Users">-->
         <!--select-->

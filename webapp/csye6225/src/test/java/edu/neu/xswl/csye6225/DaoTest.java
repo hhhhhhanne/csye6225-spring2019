@@ -26,7 +26,7 @@ public class DaoTest {
 
     @Test
     public void testAddUser(){
-        userService.addUser("test22","test22","test22");
+        userService.addUser("test22","test22");
     }
 
     @Test
