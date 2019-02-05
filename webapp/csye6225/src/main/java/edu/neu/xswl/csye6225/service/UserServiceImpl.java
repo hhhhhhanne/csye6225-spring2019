@@ -23,9 +23,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(String userName, String password, String salt) {
+    public void addUser(String userName, String password) {
         if (!checkUsername(userName)) {
-            userDao.addUser(userName, password, salt);
+            userDao.addUser(userName, password);
         }
     }
 

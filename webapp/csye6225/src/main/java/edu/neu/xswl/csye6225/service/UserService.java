@@ -8,7 +8,7 @@ public interface UserService {
 
     public Users getUserByUsername(String userName);
 
-    public void addUser(String userName, String password,String salt);
+    public void addUser(String userName, String password);
 
     public Boolean checkUsername(String userName);
 
