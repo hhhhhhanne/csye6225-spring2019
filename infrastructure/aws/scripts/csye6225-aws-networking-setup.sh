@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+
 echo 'Please enter name!'
 read name
 ##############CREATE VPC AND GET VPCID
@@ -47,13 +48,21 @@ echo 'route created successfully!'
 
 ##############MODIFY SECURITY GROUP
 #DELETE ALL DEFAULT RULES
-#groupId=`aws ec2 describe-security-groups --group-names default --query 'GroupId' --output text`
-#ipPermissions=`aws ec2 describe-security-groups --group-id $groupId --query 'IpPermissions' --output text`
-#ipPermissionsEgress=`aws ec2 describe-security-groups --group-id $groupId --query 'IpPermissionsEgress' --output text`
-#aws ec2 revoke-security-group-ingress --group-id $groupId --ip-permissions $ipPermissions
-#aws ec2 revoke-security-group-ingress --group-id $groupId --ip-permissions $ipPermissionsEgress
+groupId=`aws ec2 describe-security-groups --group-names default --query 'GroupId' --output text`
+ipPermissions=`aws ec2 describe-security-groups --group-id $groupId --query 'IpPermissions' --output text`
+ipPermissionsEgress=`aws ec2 describe-security-groups --group-id $groupId --query 'IpPermissionsEgress' --output text`
+
+echo $ipPermissions > ipPermissions.txt
+echo $ipPermissionsEgress > ipPermissionsEgress.txt
+
+aws ec2 revoke-security-group-ingress --group-id $groupId --ip-permissions file://ipPermissions.txt
+aws ec2 revoke-security-group-ingress --group-id $groupId --ip-permissions file://ipPermissionsEgress.txt
+
+rm -f ipPermissions.txt
+rm -f ipPermissionsEgress.txt
+
 #ADD NEW RULES
-#aws ec2 authorize-security-group-ingress --group-id sg-b5502cf0 --protocol tcp --port 22 --cidr 0.0.0.0/0
-#aws ec2 authorize-security-group-ingress --group-id $groupId --protocol tcp --port 80 --cidr 0.0.0.0/0
-#aws ec2 authorize-security-group-egress --group-id sg-b5502cf0 --protocol tcp --port 22 --cidr 0.0.0.0/0
-#aws ec2 authorize-security-group-egress --group-id $groupId --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-id $groupId --protocol tcp --port 22 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-id $groupId --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id $groupId --protocol tcp --port 22 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-egress --group-id $groupId --protocol tcp --port 80 --cidr 0.0.0.0/0
