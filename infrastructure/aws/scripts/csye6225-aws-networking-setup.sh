@@ -48,7 +48,7 @@ echo 'route created successfully!'
 
 ##############MODIFY SECURITY GROUP
 #DELETE ALL DEFAULT RULES
-groupId=`aws ec2 describe-security-groups --group-names default --query 'SecurityGroups[0].GroupId' --output text`
+groupId=`aws ec2 describe-security-groups --query 'SecurityGroups[0].GroupId' --output text`
 echo $groupId
 ipPermissions=`aws ec2 describe-security-groups --group-id $groupId --query 'SecurityGroups[0].IpPermissions'`
 echo $ipPermissions
