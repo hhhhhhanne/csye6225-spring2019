@@ -49,9 +49,9 @@ echo 'route created successfully!'
 ##############MODIFY SECURITY GROUP
 #DELETE ALL DEFAULT RULES
 groupId=`aws ec2 describe-security-groups --filters "Name=vpc-id, Values=$VpcId" --query 'SecurityGroups[0].GroupId' --output text`
-echo $groupId
+
 ipPermissions=`aws ec2 describe-security-groups --group-id $groupId --query 'SecurityGroups[0].IpPermissions'`
-echo $ipPermissions
+
 ipPermissionsEgress=`aws ec2 describe-security-groups --group-id $groupId --query 'SecurityGroups[0].IpPermissionsEgress' --output json`
 if [ "$ipPermissions"x != "[]"x ]; then
 echo $ipPermissions > ipPermissions.txt
