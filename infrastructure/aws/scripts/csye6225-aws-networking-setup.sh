@@ -1,9 +1,10 @@
 #!/bin/sh
-echo 'Please enter VPC name!'
-read VpcName
+set -e
+echo 'Please enter name!'
+read name
 ##############CREATE VPC AND GET VPCID
 VpcId=`aws ec2 create-vpc --cidr-block 10.0.0.0/16 --query 'Vpc.VpcId' --output text`
-aws ec2 create-tags --resources $VpcId --tags Key=Name,Value=$VpcName
+aws ec2 create-tags --resources $VpcId --tags Key=Name,Value=$name-Vpc
 echo 'VPC created successfully!'
 ##############GET AVAILABILITY-ZONES FROM US-EAST-1
 zone1=`aws ec2 describe-availability-zones --region us-east-1 --query 'AvailabilityZones[0].ZoneId' --output text`
@@ -12,13 +13,17 @@ zone3=`aws ec2 describe-availability-zones --region us-east-1 --query 'Availabil
 
 ##############CREATE SUBNET
 subnet1=`aws ec2 create-subnet --availability-zone-id $zone1 --vpc-id $VpcId --cidr-block 10.0.1.0/24 --query 'Subnet.SubnetId' --output text`
+aws ec2 create-tags --resources $subnet1 --tags Key=Name,Value=$name-Subnet1
 echo 'first subnet created successfully!'
 subnet2=`aws ec2 create-subnet --availability-zone-id $zone2 --vpc-id $VpcId --cidr-block 10.0.16.0/24 --query 'Subnet.SubnetId' --output text`
+aws ec2 create-tags --resources $subnet2 --tags Key=Name,Value=$name-Subnet2
 echo 'second subnet created successfully!'
 subnet3=`aws ec2 create-subnet --availability-zone-id $zone3 --vpc-id $VpcId --cidr-block 10.0.32.0/24 --query 'Subnet.SubnetId' --output text`
+aws ec2 create-tags --resources $subnet3 --tags Key=Name,Value=$name-Subnet3
 echo 'third subnet created successfully!'
 ##############CREATE INTERNET GATEWAY
 gatewayId=`aws ec2 create-internet-gateway --query 'InternetGateway.InternetGatewayId' --output text`
+aws ec2 create-tags --resources $gatewayId --tags Key=Name,Value=$name-Gateway
 echo 'Internet gateway created successfully!'
 
 ##############ATTACH INTERNET GATEWAY TO VPC
@@ -27,6 +32,7 @@ echo 'Internet gateway attached successfully!'
 
 ##############CREATE ROUTE TABLE
 routeTableId=`aws ec2 create-route-table --vpc-id $VpcId --query 'RouteTable.RouteTableId' --output text`
+aws ec2 create-tags --resources $routeTableId --tags Key=Name,Value=$name-RouteTable
 echo 'route table created successfully!'
 
 ##############ASSOCIATE ALL SUBNETS TO ROUTE TABLE
