@@ -51,16 +51,18 @@ echo 'route created successfully!'
 groupId=`aws ec2 describe-security-groups --filters "Name=vpc-id, Values=$VpcId" --query 'SecurityGroups[0].GroupId' --output text`
 echo $groupId
 ipPermissions=`aws ec2 describe-security-groups --group-id $groupId --query 'SecurityGroups[0].IpPermissions'`
+echo $ipPermissions
 ipPermissionsEgress=`aws ec2 describe-security-groups --group-id $groupId --query 'SecurityGroups[0].IpPermissionsEgress' --output json`
-
+if [ "$ipPermissions"x != "[]"x ]; then
 echo $ipPermissions > ipPermissions.txt
-echo $ipPermissionsEgress > ipPermissionsEgress.txt
-
 aws ec2 revoke-security-group-ingress --group-id $groupId --ip-permissions file://ipPermissions.txt
-aws ec2 revoke-security-group-egress --group-id $groupId --ip-permissions file://ipPermissionsEgress.txt
-
 rm -f ipPermissions.txt
+fi
+if [ "$ipPermissionsEgress"x != "[]"x ]; then
+echo $ipPermissionsEgress > ipPermissionsEgress.txt
+aws ec2 revoke-security-group-egress --group-id $groupId --ip-permissions file://ipPermissionsEgress.txt
 rm -f ipPermissionsEgress.txt
+fi
 
 #ADD NEW RULES
 aws ec2 authorize-security-group-ingress --group-id $groupId --protocol tcp --port 22 --cidr 0.0.0.0/0
