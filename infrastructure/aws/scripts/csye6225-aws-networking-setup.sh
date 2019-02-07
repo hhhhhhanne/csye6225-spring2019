@@ -64,6 +64,7 @@ aws ec2 revoke-security-group-egress --group-id $groupId --ip-permissions file:/
 rm -f ipPermissionsEgress.txt
 fi
 
+
 #ADD NEW RULES
 aws ec2 authorize-security-group-ingress --group-id $groupId --protocol tcp --port 22 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-id $groupId --protocol tcp --port 80 --cidr 0.0.0.0/0
