@@ -1,7 +1,9 @@
 #!/bin/sh
-
+echo 'Please enter VPC name!'
+read VpcName
 ##############CREATE VPC AND GET VPCID
 VpcId=`aws ec2 create-vpc --cidr-block 10.0.0.0/16 --query 'Vpc.VpcId' --output text`
+aws ec2 create-tags --resources $VpcId --tags Key=Name,Value=$VpcName
 echo 'VPC created successfully!'
 ##############GET AVAILABILITY-ZONES FROM US-EAST-1
 zone1=`aws ec2 describe-availability-zones --region us-east-1 --query 'AvailabilityZones[0].ZoneId' --output text`
