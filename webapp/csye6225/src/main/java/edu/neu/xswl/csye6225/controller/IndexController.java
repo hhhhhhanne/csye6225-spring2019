@@ -1,10 +1,8 @@
 package edu.neu.xswl.csye6225.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONPObject;
 import edu.neu.xswl.csye6225.pojo.Users;
 import edu.neu.xswl.csye6225.service.UserService;
-import edu.neu.xswl.csye6225.utils.DecodeToken;
 import edu.neu.xswl.csye6225.utils.EmailValidationUtil;
 import edu.neu.xswl.csye6225.utils.PasswordUtilImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,24 +49,9 @@ public class IndexController {
     public ResponseEntity<?> registerPost(@RequestBody String jsonUser) {
         Users user = JSON.parseObject(jsonUser, Users.class);
         HashMap<String, String> response = new HashMap<>();
-
-//        token = token.substring(6);
-//        DecodeToken dt;
-//        try {
-//            dt = new DecodeToken(token);
-//        } catch(Exception e) {
-//            response.put("Warning", "Can not decode!");
-//            return new ResponseEntity<>(response,  HttpStatus.UNAUTHORIZED);
-//        }
-//
-//        if(!dt.isValid()) {
-//            response.put("Warning", "The token is not valid!");
-//            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-//        }
-
         String username = user.getUsername();
         String password = user.getPassword();
-        System.out.println(username+password);
+        System.out.println(username + password);
         if (null == username || username.equals("") || null == password || password.equals("")) {
             response.put("Warning", "Please enter username or password!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -86,7 +69,7 @@ public class IndexController {
         Users user_db = userService.getUserByUsername(username);
 
         if (user_db == null) {
-            userService.addUser(username,passwordHash);
+            userService.addUser(username, passwordHash);
             response.put("Message", "You have registered successfully!");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {

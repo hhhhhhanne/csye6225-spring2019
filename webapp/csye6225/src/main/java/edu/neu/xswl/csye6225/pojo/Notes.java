@@ -12,6 +12,8 @@ public class Notes {
 
     private String note_id;
 
+    private String title;
+
     private String content;
 
     private String created_on;
