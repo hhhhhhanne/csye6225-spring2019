@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Notes {
 
-    private String noteId;
+    private String note_id;
 
     private String content;
 
-    private String createdOn;
+    private String created_on;
 
-    private String lastUpdatedOn;
+    private String last_updated_on;
 
     private Integer UserId;
 }
