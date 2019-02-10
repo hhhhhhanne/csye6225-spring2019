@@ -18,5 +18,5 @@ public class Notes {
 
     private String last_updated_on;
 
-    private Integer UserId;
+    private Integer userId;
 }
