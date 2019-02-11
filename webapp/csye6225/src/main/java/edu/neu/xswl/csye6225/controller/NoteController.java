@@ -87,7 +87,14 @@ public class NoteController {
 
         JSONObject jsonObject = new JSONObject();
 
-        Notes note = JSON.parseObject(jsonNote, Notes.class);
+        Notes note;
+        try{
+            note = JSON.parseObject(jsonNote, Notes.class);
+        }catch (Exception e){
+            jsonObject.put("message", "Invalid input");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
+
         String noteId = UUID.randomUUID().toString();
         note.setNoteId(noteId);
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
