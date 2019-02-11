@@ -67,13 +67,13 @@ public class NoteController {
             return new ResponseEntity<>(jsonObject, HttpStatus.UNAUTHORIZED);
         }
 
-        Notes note;
+        Notes note = noteService.selectByNoteId(id);
 
         //If note not exist, send BAD_REQUEST
         try{
-            note = noteService.selectByNoteId(id);
+            note.getNoteId();
         }catch (Exception e){
-            jsonObject.put("message", "task does not exist");
+            jsonObject.put("message", "note does not exist");
             return new ResponseEntity<>(jsonObject,HttpStatus.NOT_FOUND);
         }
 
@@ -83,18 +83,10 @@ public class NoteController {
 
     @RequestMapping(value = "/note", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> createNote(@RequestBody String jsonNote, Principal principal, HttpServletResponse response) {
-        //我不知道这句话干啥的，学姐写了，你们看看要不要
-        response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+    public ResponseEntity<?> createNote(@RequestBody String jsonNote, Principal principal) {
+
         JSONObject jsonObject = new JSONObject();
-        //学姐写的判断json长度，我也不知道我们这个多少会爆
-//        JsonObject jsonObject = new JsonObject();
-//        Gson gson = new Gson();
-//        if (gson.fromJson(sTask, Task.class).getDescription().length() >= 4096) {
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//            jsonObject.addProperty("message", "task: bad request : size too large");
-//            return jsonObject.toString();
-//        }
+
         Notes note = JSON.parseObject(jsonNote, Notes.class);
         String noteId = UUID.randomUUID().toString();
         note.setNoteId(noteId);
@@ -127,11 +119,11 @@ public class NoteController {
     public ResponseEntity<?> updateNote(@PathVariable("id") String id, Principal principal,@RequestBody String jsonNote, HttpServletResponse response) {
         JSONObject jsonObject = new JSONObject();
 
-        Notes oldNote;
+        Notes oldNote = noteService.selectByNoteId(id);
         try{
-            oldNote = noteService.selectByNoteId(id);
+            oldNote.getNoteId();
         }catch (Exception e){
-            jsonObject.put("message", "task does not exist");
+            jsonObject.put("message", "note does not exist");
 //            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
         }
@@ -173,11 +165,14 @@ public class NoteController {
 
         //If note not exist, send BAD_REQUEST
         try{
-            noteService.deleteByNoteId(id);
+            noteService.selectByNoteId(id).getNoteId();
         }catch (Exception e){
-            jsonObject.put("message", "task does not exist");
+            jsonObject.put("message", "note does not exist");
             return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
         }
+
+        //If exist, delete
+        noteService.deleteByNoteId(id);
 
         //If deleted successfully, send NO_CONTENT
         return new ResponseEntity<>(jsonObject, HttpStatus.NO_CONTENT);
