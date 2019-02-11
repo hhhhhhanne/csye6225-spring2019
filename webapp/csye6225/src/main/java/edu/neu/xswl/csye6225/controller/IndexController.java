@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 @RestController
 public class IndexController {
@@ -51,7 +52,8 @@ public class IndexController {
         HashMap<String, String> response = new HashMap<>();
         String username = user.getUsername();
         String password = user.getPassword();
-        System.out.println(username + password);
+        String uuid = UUID.randomUUID().toString();
+//        System.out.println(username + password);
         if (null == username || username.equals("") || null == password || password.equals("")) {
             response.put("Warning", "Please enter username or password!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -67,9 +69,9 @@ public class IndexController {
 
         String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
         Users user_db = userService.getUserByUsername(username);
-
+        System.out.println(user_db);
         if (user_db == null) {
-            userService.addUser(username, passwordHash);
+            userService.addUser(uuid, username, passwordHash);
             response.put("Message", "You have registered successfully!");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {

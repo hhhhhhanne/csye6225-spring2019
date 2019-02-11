@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public Users getUserById(int userId) {
+    public Users getUserById(String userId) {
         return userDao.selectByUserId(userId);
     }
 
@@ -23,9 +23,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(String userName, String password) {
+    public void addUser(String uuid, String userName, String password) {
         if (!checkUsername(userName)) {
-            userDao.addUser(userName, password);
+            userDao.addUser(uuid, userName, password);
         }
     }
 

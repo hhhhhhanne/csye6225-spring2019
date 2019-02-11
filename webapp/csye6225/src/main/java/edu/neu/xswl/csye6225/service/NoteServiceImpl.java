@@ -17,13 +17,14 @@ public class NoteServiceImpl implements NoteService {
 
 
     @Override
-    public List<Notes> selectByUser(Users user) {
-        return noteDao.selectByUser(user);
+    public List<Notes> selectByUserId(Integer userId) {
+        return noteDao.selectByUserId(userId);
     }
 
     @Override
     public Notes addNote(Notes note) {
-        return noteDao.addNote(note);
+        noteDao.addNote(note);
+        return note;
     }
 
     @Override
@@ -32,8 +33,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Notes updateByNoteId(String noteId, Notes note) {
-        return noteDao.updateByNoteId(noteId, note);
+    public Notes updateByNoteId(Notes note) {
+        noteDao.updateByNoteId(note);
+        return note;
     }
 
     @Override
