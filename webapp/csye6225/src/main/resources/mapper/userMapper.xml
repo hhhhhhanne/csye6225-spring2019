@@ -5,8 +5,7 @@
         select
             userId,
             username,
-            password,
-            salt
+            password
         from users
         where userId = #{userId}
     </select>
@@ -14,8 +13,7 @@
         select
             userId,
             username,
-            password,
-            salt
+            password
         from users
         where username = #{username}
     </select>
