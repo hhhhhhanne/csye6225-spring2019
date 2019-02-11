@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.UUID;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DaoTest {
@@ -16,7 +18,7 @@ public class DaoTest {
 
     @Test
     public void testGetByUserId(){
-        System.out.println(userService.getUserById(1));
+        System.out.println(userService.getUserById("1"));
     }
 
     @Test
@@ -26,7 +28,9 @@ public class DaoTest {
 
     @Test
     public void testAddUser(){
-        userService.addUser("test22","test22");
+        String uuid = UUID.randomUUID().toString();
+        System.out.println(uuid);
+        userService.addUser(uuid,"test22","test22");
     }
 
     @Test

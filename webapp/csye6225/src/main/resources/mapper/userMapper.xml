@@ -18,14 +18,14 @@
         where username = #{username}
     </select>
     <insert id="addUser" parameterType="edu.neu.xswl.csye6225.pojo.Users">
-        insert into users (username, password) values (#{param1}, #{param2})
+        insert into users (userId, username, password) values (#{param1}, #{param2}, #{param3})
     </insert>
     <!--<select id="selectByUsernameAndPassword" resultType="edu.neu.xswl.csye6225.pojo.Users">-->
-        <!--select-->
-            <!--userId,-->
-            <!--username,-->
-            <!--password-->
-        <!--from users-->
-        <!--where username = #{param1} and password = #{param2}-->
+    <!--select-->
+    <!--userId,-->
+    <!--username,-->
+    <!--password-->
+    <!--from users-->
+    <!--where username = #{param1} and password = #{param2}-->
     <!--</select>-->
 </mapper>

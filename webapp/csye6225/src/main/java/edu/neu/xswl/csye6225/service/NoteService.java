@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface NoteService {
 
-    List<Notes> selectByUser(Users user);
+    List<Notes> selectByUserId(Integer userId);
 
-    void addNote(Notes note);
+    Notes addNote(Notes note);
 
     Notes selectByNoteId(String noteId);
 
-    Notes updateByNoteId(String noteId, Notes note);
+    Notes updateByNoteId(Notes note);
 
     void deleteByNoteId(String noteId);
 }

@@ -1,8 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.neu.xswl.csye6225.dao.NoteDao">
-    <insert id="addNote" parameterType="edu.neu.xswl.csye6225.pojo.Notes" >
-        insert into notes (note_id,title,content,created_on,last_updated_on,userId)
-        values (#{note_id},#{title},#{content},#{created_on},#{last_updated_on},#{userId})
+    <insert id="addNote" parameterType="edu.neu.xswl.csye6225.pojo.Notes">
+        insert into notes (noteId, title, content, createdOn, lastUpdatedOn, userId)
+        values (#{noteId}, #{title}, #{content}, #{createdOn}, #{lastUpdatedOn}, #{userId})
     </insert>
+    <select id="selectByUserId" resultType="edu.neu.xswl.csye6225.pojo.Notes">
+        select
+            noteId,
+            title,
+            content,
+            createdOn,
+            lastUpdatedOn,
+            userId
+        from notes
+        where userId = #{userId}
+    </select>
+    <select id="selectByNoteId" resultType="edu.neu.xswl.csye6225.pojo.Notes">
+        select
+            noteId,
+            title,
+            content,
+            createdOn,
+            lastUpdatedOn,
+            userId
+        from notes
+        where noteId = #{noteId}
+    </select>
+    <delete id="deleteByNoteId" parameterType="String">
+        delete from notes
+        where noteId = #{noteId}
+    </delete>
+    <update id="updateByNoteId" parameterType="edu.neu.xswl.csye6225.pojo.Notes">
+        update notes
+        set title = #{title}, content = #{content}, createdOn = #{createdOn}, lastUpdatedOn = #{lastUpdatedOn}
+        where noteId = #{noteId}
+    </update>
 </mapper>

@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -25,12 +26,41 @@ public class NoteTest {
     @Test
     public void testGetCreateNote() {
         Notes n = new Notes();
-        n.setNote_id("id");
+        n.setNoteId("idtest");
         n.setTitle("title");
         n.setContent("content");
-        String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format( new java.util.Date());
-        n.setLast_updated_on(current);
-        n.setCreated_on(current);
+        String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+        n.setCreatedOn(current);
+        n.setLastUpdatedOn(current);
         noteDao.addNote(n);
     }
+
+    @Test
+    public void testGetNotes() {
+        List<Notes> notes = noteDao.selectByUserId(18);
+        System.out.println(notes);
+    }
+
+    @Test
+    public void testSelectByNoteId() {
+        System.out.println(noteDao.selectByNoteId("idtest"));
+    }
+
+    @Test
+    public void testUpdateByNoteId() {
+        Notes n = new Notes();
+        n.setNoteId("idtest");
+        n.setTitle("123title");
+        n.setContent("123content");
+        String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+        n.setCreatedOn(current);
+        n.setLastUpdatedOn(current);
+        noteDao.updateByNoteId(n);
+    }
+
+    @Test
+    public void testDeleteByNoteId() {
+        noteDao.deleteByNoteId("idtest");
+    }
+
 }

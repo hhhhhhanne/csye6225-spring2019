@@ -1,7 +1,6 @@
 package edu.neu.xswl.csye6225.dao;
 
 import edu.neu.xswl.csye6225.pojo.Notes;
-import edu.neu.xswl.csye6225.pojo.Users;
 
 import java.util.List;
 
@@ -10,10 +9,10 @@ public interface NoteDao {
     /**
      * Select By User
      *
-     * @param user the user to be retrieved
+     * @param userId the user to be retrieved
      * @return note list created by the user
      */
-    List<Notes> selectByUser(Users user);
+    List<Notes> selectByUserId(Integer userId);
 
     /**
      * Add New Note
@@ -34,11 +33,10 @@ public interface NoteDao {
     /**
      * Update By Note Id
      *
-     * @param noteId to be deleted
-     * @param note   to replaced old note
+     * @param note to replaced old note
      * @return note updated
      */
-    Notes updateByNoteId(String noteId, Notes note);
+    void updateByNoteId(Notes note);
 
     /**
      * Delete By User Id
