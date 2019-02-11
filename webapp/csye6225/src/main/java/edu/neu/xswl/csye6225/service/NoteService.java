@@ -9,7 +9,7 @@ public interface NoteService {
 
     List<Notes> selectByUser(Users user);
 
-    Notes addNote(Notes note);
+    void addNote(Notes note);
 
     Notes selectByNoteId(String noteId);
 

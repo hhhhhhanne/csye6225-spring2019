@@ -21,7 +21,7 @@ public interface NoteDao {
      * @param note note to be added
      * @return note added
      */
-    Notes addNote(Notes note);
+    void addNote(Notes note);
 
     /**
      * Select By User Id
