@@ -33,10 +33,11 @@ public class NoteController {
 
     @RequestMapping(value = "/note", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> createTasks(@RequestBody String jsonNote, Principal principal, HttpServletResponse response) {
-
+    public ResponseEntity<?> createNote(@RequestBody String jsonNote, Principal principal, HttpServletResponse response) {
+        //我不知道这句话干啥的，学姐写了，你们看看要不要
         response.setContentType(ContentType.APPLICATION_JSON.getMimeType());
         JSONObject jsonObject = new JSONObject();
+        //学姐写的判断json长度，我也不知道我们这个多少会爆
 //        JsonObject jsonObject = new JsonObject();
 //        Gson gson = new Gson();
 //        if (gson.fromJson(sTask, Task.class).getDescription().length() >= 4096) {
@@ -64,6 +65,45 @@ public class NoteController {
         jsonObject.put("title", note.getTitle());
         jsonObject.put("created_on", note.getCreatedOn());
         jsonObject.put("last_updated_on", note.getLastUpdatedOn());
+        return new ResponseEntity<>(jsonObject, HttpStatus.CREATED);
+    }
+    @RequestMapping(value = "/note/{id}", method = RequestMethod.PUT, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> updateNote(@PathVariable("id") String id, Principal principal,@RequestBody String jsonNote, HttpServletResponse response) {
+        JSONObject jsonObject = new JSONObject();
+
+        Notes oldNote;
+        try{
+            oldNote = noteService.selectByNoteId(id);
+        }catch (Exception e){
+            jsonObject.put("message", "task does not exist");
+//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
+        }
+        Users user;
+        try{
+            user = userService.getUserByUsername(principal.getName());
+        }catch (Exception e){
+            jsonObject.put("message", "user does not exist");
+//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
+        }
+        if(!user.getUserId().equals(oldNote.getUserId())){
+            jsonObject.put("message", "user does not match");
+//            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return new ResponseEntity<>(jsonObject,HttpStatus.UNAUTHORIZED);
+        }
+        Notes newNote = JSON.parseObject(jsonNote, Notes.class);
+        newNote.setNoteId(id);
+        String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+        newNote.setLastUpdatedOn(current);
+        noteService.updateByNoteId(newNote);
+        Notes returnNote = noteService.selectByNoteId(id);
+        jsonObject.put("id", returnNote.getNoteId());
+        jsonObject.put("content", returnNote.getContent());
+        jsonObject.put("title", returnNote.getTitle());
+        jsonObject.put("created_on", returnNote.getCreatedOn());
+        jsonObject.put("last_updated_on", returnNote.getLastUpdatedOn());
         return new ResponseEntity<>(jsonObject, HttpStatus.CREATED);
     }
 }

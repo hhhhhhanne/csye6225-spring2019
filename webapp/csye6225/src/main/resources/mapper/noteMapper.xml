@@ -31,9 +31,17 @@
         delete from notes
         where noteId = #{noteId}
     </delete>
+    <!--<update id="updateByNoteId" parameterType="edu.neu.xswl.csye6225.pojo.Notes">-->
+        <!--update notes-->
+        <!--set title = #{title}, content = #{content}, createdOn = #{createdOn}, lastUpdatedOn = #{lastUpdatedOn}-->
+        <!--where noteId = #{noteId}-->
+    <!--</update>-->
     <update id="updateByNoteId" parameterType="edu.neu.xswl.csye6225.pojo.Notes">
         update notes
-        set title = #{title}, content = #{content}, createdOn = #{createdOn}, lastUpdatedOn = #{lastUpdatedOn}
+                <set><if test="title!=null">title = #{title},</if>
+                <if test="content!=null">content = #{content},</if>
+                <if test="createdOn!=null">createdOn = #{createdOn},</if>
+                <if test="lastUpdatedOn!=null">lastUpdatedOn = #{lastUpdatedOn}</if></set>
         where noteId = #{noteId}
     </update>
 </mapper>

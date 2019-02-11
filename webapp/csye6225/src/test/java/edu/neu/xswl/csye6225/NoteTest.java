@@ -50,10 +50,10 @@ public class NoteTest {
     public void testUpdateByNoteId() {
         Notes n = new Notes();
         n.setNoteId("idtest");
-        n.setTitle("123title");
+//        n.setTitle("123title");
         n.setContent("123content");
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
-        n.setCreatedOn(current);
+//        n.setCreatedOn(current);
         n.setLastUpdatedOn(current);
         noteDao.updateByNoteId(n);
     }
