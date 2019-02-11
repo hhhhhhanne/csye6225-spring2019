@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface NoteService {
 
-    List<Notes> selectByUserId(Integer userId);
+    List<Notes> selectByUserId(String userId);
 
     Notes addNote(Notes note);
 

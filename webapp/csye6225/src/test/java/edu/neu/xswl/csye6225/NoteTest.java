@@ -37,7 +37,7 @@ public class NoteTest {
 
     @Test
     public void testGetNotes() {
-        List<Notes> notes = noteDao.selectByUserId(18);
+        List<Notes> notes = noteDao.selectByUserId("9643f85e-67f6-4f91-965a-0d42f8ece005");
         System.out.println(notes);
     }
 

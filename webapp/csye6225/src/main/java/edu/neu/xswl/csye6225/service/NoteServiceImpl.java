@@ -17,7 +17,7 @@ public class NoteServiceImpl implements NoteService {
 
 
     @Override
-    public List<Notes> selectByUserId(Integer userId) {
+    public List<Notes> selectByUserId(String userId) {
         return noteDao.selectByUserId(userId);
     }
 

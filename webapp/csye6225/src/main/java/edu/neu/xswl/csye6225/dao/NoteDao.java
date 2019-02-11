@@ -12,7 +12,7 @@ public interface NoteDao {
      * @param userId the user to be retrieved
      * @return note list created by the user
      */
-    List<Notes> selectByUserId(Integer userId);
+    List<Notes> selectByUserId(String userId);
 
     /**
      * Add New Note
