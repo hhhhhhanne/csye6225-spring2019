@@ -44,7 +44,6 @@ public class IndexController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
     @RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> registerPost(@RequestBody String jsonUser) {
@@ -69,8 +68,8 @@ public class IndexController {
 
         String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
         Users user_db = userService.getUserByUsername(username);
-        System.out.println(user_db);
-        if (user_db == null) {
+        // System.out.println(user_db);
+        if (user_db == null) {  // Check is username already exist
             userService.addUser(uuid, username, passwordHash);
             response.put("Message", "You have registered successfully!");
             return new ResponseEntity<>(response, HttpStatus.CREATED);

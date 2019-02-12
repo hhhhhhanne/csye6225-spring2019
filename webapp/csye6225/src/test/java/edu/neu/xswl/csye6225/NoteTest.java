@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.UUID;
 
 
 @RunWith(SpringRunner.class)
@@ -26,9 +27,11 @@ public class NoteTest {
     @Test
     public void testGetCreateNote() {
         Notes n = new Notes();
-        n.setNoteId("idtest");
-        n.setTitle("title");
-        n.setContent("content");
+        String noteId = UUID.randomUUID().toString();
+        n.setNoteId(noteId);
+//        n.setNoteId("idtest");
+        n.setTitle("title1");
+        n.setContent("content1");
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
         n.setCreatedOn(current);
         n.setLastUpdatedOn(current);

@@ -18,7 +18,7 @@ public interface NoteDao {
      * Add New Note
      *
      * @param note note to be added
-     * @return note added
+     * @return
      */
     void addNote(Notes note);
 
@@ -34,7 +34,7 @@ public interface NoteDao {
      * Update By Note Id
      *
      * @param note to replaced old note
-     * @return note updated
+     * @return
      */
     void updateByNoteId(Notes note);
 
@@ -42,7 +42,7 @@ public interface NoteDao {
      * Delete By User Id
      *
      * @param noteId to be deleted
-     * @return Nothing
+     * @return
      */
     void deleteByNoteId(String noteId);
 
