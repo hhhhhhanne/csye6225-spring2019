@@ -22,9 +22,9 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Notes addNote(Notes note) {
+    public void addNote(Notes note) {
         noteDao.addNote(note);
-        return note;
+//        return note;
     }
 
     @Override
