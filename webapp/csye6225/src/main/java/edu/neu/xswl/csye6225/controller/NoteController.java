@@ -142,7 +142,7 @@ public class NoteController {
 //            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
         }
-        System.out.println(user.getUserId());
+//        System.out.println(user.getUserId());
         if(!user.getUserId().equals(oldNote.getUserId())){
             jsonObject.put("message", "user does not match");
 //            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
