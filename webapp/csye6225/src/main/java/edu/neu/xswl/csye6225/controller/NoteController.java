@@ -91,13 +91,14 @@ public class NoteController {
         Notes note;
         try{
             note = JSON.parseObject(jsonNote, Notes.class);
+            String noteId = UUID.randomUUID().toString();
+            note.setNoteId(noteId);
         }catch (Exception e){
-            jsonObject.put("message", "Invalid input");
+            jsonObject.put("message", "Bad Request");
             return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
         }
 
-        String noteId = UUID.randomUUID().toString();
-        note.setNoteId(noteId);
+
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
         note.setCreatedOn(current);
         note.setLastUpdatedOn(current);
@@ -133,8 +134,7 @@ public class NoteController {
         try{
             oldNote.getNoteId();
         }catch (Exception e){
-            jsonObject.put("message", "note does not exist");
-//            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            jsonObject.put("message", "Note Not Exist");
             return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
         }
         Users user;
@@ -156,12 +156,13 @@ public class NoteController {
         Notes newNote;
         try{
             newNote = JSON.parseObject(jsonNote, Notes.class);
+            newNote.setNoteId(id);
         }catch (Exception e){
-            jsonObject.put("message", "Invalid input");
+            jsonObject.put("message", "Bad Request");
             return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
         }
 
-        newNote.setNoteId(id);
+
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
         newNote.setLastUpdatedOn(current);
         noteService.updateByNoteId(newNote);
