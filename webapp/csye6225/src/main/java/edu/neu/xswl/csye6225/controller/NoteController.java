@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -83,7 +84,7 @@ public class NoteController {
 
     @RequestMapping(value = "/note", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> createNote(@RequestBody String jsonNote, Principal principal) {
+    public ResponseEntity<?> createNote(@RequestBody(required=false) String jsonNote, Principal principal) {
 
         JSONObject jsonObject = new JSONObject();
 
@@ -123,7 +124,9 @@ public class NoteController {
 
     @RequestMapping(value = "/note/{id}", method = RequestMethod.PUT, produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> updateNote(@PathVariable("id") String id, Principal principal,@RequestBody String jsonNote, HttpServletResponse response) {
+    public ResponseEntity<?> updateNote(@PathVariable("id") String id, Principal principal,
+                                        @RequestBody(required=false) String jsonNote, HttpServletResponse response) {
+
         JSONObject jsonObject = new JSONObject();
 
         Notes oldNote = noteService.selectByNoteId(id);
@@ -148,7 +151,16 @@ public class NoteController {
 //            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return new ResponseEntity<>(jsonObject,HttpStatus.UNAUTHORIZED);
         }
-        Notes newNote = JSON.parseObject(jsonNote, Notes.class);
+
+        //If input JSON is invalid
+        Notes newNote;
+        try{
+            newNote = JSON.parseObject(jsonNote, Notes.class);
+        }catch (Exception e){
+            jsonObject.put("message", "Invalid input");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
+
         newNote.setNoteId(id);
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
         newNote.setLastUpdatedOn(current);
