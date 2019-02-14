@@ -6,9 +6,9 @@ public interface UserDao {
 
     Users selectByUsername(String username);
 
-    Users selectByUserId(Integer userId);
+    Users selectByUserId(String userId);
 
-    void addUser(String username, String password);
+    void addUser(String uuid,String username, String password);
 
 //    Users selectByUsernameAndPassword(String username,String password);
 }
