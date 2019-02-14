@@ -60,9 +60,10 @@ public class NoteController {
 
         JSONObject jsonObject = new JSONObject();
 
+        Users user;
         //If user not authorized, send UNAUTHORIZED
         try {
-            userService.getUserByUsername(principal.getName());
+            user = userService.getUserByUsername(principal.getName());
         } catch (Exception e) {
             jsonObject.put("message", "user does not exist");
             return new ResponseEntity<>(jsonObject, HttpStatus.UNAUTHORIZED);
@@ -76,6 +77,11 @@ public class NoteController {
         }catch (Exception e){
             jsonObject.put("message", "note does not exist");
             return new ResponseEntity<>(jsonObject,HttpStatus.NOT_FOUND);
+        }
+
+        if(!user.getUserId().equals(note.getUserId())){
+            jsonObject.put("message", "user does not match");
+            return new ResponseEntity<>(jsonObject,HttpStatus.UNAUTHORIZED);
         }
 
         return new ResponseEntity<>(getResponseEntity(jsonObject, note), HttpStatus.OK);
@@ -145,10 +151,9 @@ public class NoteController {
 //            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new ResponseEntity<>(jsonObject,HttpStatus.BAD_REQUEST);
         }
-//        System.out.println(user.getUserId());
+
         if(!user.getUserId().equals(oldNote.getUserId())){
             jsonObject.put("message", "user does not match");
-//            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return new ResponseEntity<>(jsonObject,HttpStatus.UNAUTHORIZED);
         }
 
