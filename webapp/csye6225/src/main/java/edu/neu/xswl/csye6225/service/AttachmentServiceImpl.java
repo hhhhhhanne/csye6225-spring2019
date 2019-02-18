@@ -22,8 +22,8 @@ public class AttachmentServiceImpl implements  AttachmentService {
     }
 
     @Override
-    public void updateByAttachmentId(Attachments attachment) {
-        attachmentDao.updateByAttachmentId(attachment);
+    public void updateByAttachment(Attachments attachment) {
+        attachmentDao.updateByAttachment(attachment);
     }
 
     @Override
