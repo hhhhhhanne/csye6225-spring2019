@@ -2,10 +2,12 @@ package edu.neu.xswl.csye6225.service;
 
 import edu.neu.xswl.csye6225.dao.AttachmentDao;
 import edu.neu.xswl.csye6225.pojo.Attachments;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
+@Service("AttachmentService")
 public class AttachmentServiceImpl implements  AttachmentService {
 
     @Resource
@@ -14,6 +16,11 @@ public class AttachmentServiceImpl implements  AttachmentService {
     @Override
     public List<Attachments> selectByNoteId(String noteId) {
         return attachmentDao.selectByNoteId(noteId);
+    }
+
+    @Override
+    public Attachments selectByAttachmentId(String attachmentId) {
+        return attachmentDao.selectByAttachmentId(attachmentId);
     }
 
     @Override

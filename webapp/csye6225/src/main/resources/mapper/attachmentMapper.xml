@@ -14,6 +14,15 @@
         where noteId = #{noteId}
     </select>
 
+    <select id="selectByAttachmentId" resultType="edu.neu.xswl.csye6225.pojo.Attachments">
+        select
+            attachmentId,
+            url,
+            noteId
+        from attachments
+        where attachmentId = #{attachmentId}
+    </select>
+
     <delete id="deleteByAttachmentId" parameterType="String">
         delete from attachments
         where attachmentId = #{attachmentId}
