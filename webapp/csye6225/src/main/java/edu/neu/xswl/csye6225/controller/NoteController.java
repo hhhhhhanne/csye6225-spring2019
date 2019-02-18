@@ -15,10 +15,13 @@ import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.Response;
+import java.io.File;
+import java.io.IOException;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -184,6 +187,9 @@ public class NoteController {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
+        if (note == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         if (user.getUserId().equals(note.getUserId())) {
             List<Attachments> attachmentsList = attachmentService.selectByNoteId(id);
@@ -200,15 +206,28 @@ public class NoteController {
 
     @PostMapping(value = "/{id}/attachments", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> postAttachment(@PathVariable("id") String id, @RequestBody(required = false) String jsonAttachment, Principal principal) {
+    public ResponseEntity<?> postAttachment(@PathVariable("id") String id, @RequestParam(value = "file", required = false) MultipartFile file, Principal principal) {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
 
-        Attachments attachment;
+        if (file == null || note == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Attachments attachment = new Attachments();
+        String fileName = file.getOriginalFilename();
+        String folder = "/src/main/resources/static";
+        String relativePath = System.getProperty("user.dir");
+        String filePath = null;
         try {
-            attachment = JSON.parseObject(jsonAttachment, Attachments.class);
+            filePath = saveFile(file, relativePath + folder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
             attachment.setAttachmentId(UUID.randomUUID().toString());
+            attachment.setUrl(filePath);
             attachment.setNoteId(id);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -225,22 +244,40 @@ public class NoteController {
 
     @PutMapping(value = "/{id}/attachments/{idAttachments}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> updateAttachment(@PathVariable("id") String id, @PathVariable("idAttachments") String idAttachments, @RequestBody(required = false) String jsonAttachment, Principal principal) {
+    public ResponseEntity<?> updateAttachment(@PathVariable("id") String id, @PathVariable("idAttachments") String idAttachments, @RequestParam(value = "file", required = false) MultipartFile file, Principal principal) {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
-
-        Attachments attachment;
+        if (file == null || note == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Attachments attachment = attachmentService.selectByAttachmentId(idAttachments);
+        if (attachment == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        String oldPath = attachment.getUrl();
+        String fileName = file.getOriginalFilename();
+        String folder = "/src/main/resources/static";
+        String relativePath = System.getProperty("user.dir");
+        String filePath = null;
         try {
-            attachment = JSON.parseObject(jsonAttachment, Attachments.class);
-            attachment.setAttachmentId(idAttachments);
-            attachment.setNoteId(attachmentService.selectByAttachmentId(idAttachments).getNoteId());
+            filePath = saveFile(file, relativePath + folder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            attachment.setUrl(filePath);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         if (user.getUserId().equals(note.getUserId()) && attachment.getNoteId().equals(id)) {
             attachmentService.updateByAttachment(attachment);
+            try {
+                delete(oldPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -250,15 +287,25 @@ public class NoteController {
 
     @DeleteMapping(value = "/{id}/attachments/{idAttachments}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> deleteAttachment(@PathVariable("id") String id, @PathVariable("idAttachments") String idAttachments, @RequestBody(required = false) String jsonAttachment, Principal principal) {
+    public ResponseEntity<?> deleteAttachment(@PathVariable("id") String id, @PathVariable("idAttachments") String idAttachments, Principal principal) {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
-
+        if (note == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Attachments attachments = attachmentService.selectByAttachmentId(idAttachments);
-
+        if (attachments == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        String oldPath = attachments.getUrl();
         if (user.getUserId().equals(note.getUserId()) && attachments.getNoteId().equals(note.getNoteId())) {
             attachmentService.deleteByAttachmentId(idAttachments);
+            try {
+                delete(oldPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -279,6 +326,39 @@ public class NoteController {
         jsonObject.put("id", attachment.getAttachmentId());
         jsonObject.put("url", attachment.getUrl());
         return jsonObject;
+    }
+
+    //save file
+    private String saveFile(MultipartFile file, String path) throws IOException {
+
+        if (!file.isEmpty()) {
+            String filename = file.getOriginalFilename();
+            File filepath = new File(path, filename);
+
+            //if path not exist, create the folder
+            if (!filepath.getParentFile().exists()) {
+                filepath.getParentFile().mkdirs();
+            }
+            String finalPath = path + File.separator + filename;
+
+            //transfer the files into the target folder
+            file.transferTo(new File(finalPath));
+            return finalPath;
+        } else {
+            return "file not exist";
+        }
+    }
+
+    //delete file on file system
+    private void delete(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            System.out.println("[log] Delete File failed:" + file.getName() + "not exist！");
+        } else {
+            if (file.isFile()) file.delete();
+        }
+
+
     }
 
 }
