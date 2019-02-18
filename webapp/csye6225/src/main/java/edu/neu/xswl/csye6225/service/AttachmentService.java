@@ -8,6 +8,8 @@ public interface AttachmentService {
 
     List<Attachments> selectByNoteId(String noteId);
 
+    Attachments selectByAttachmentId(String attachmentId);
+
     void addAttachment(Attachments attachment);
 
     void updateByAttachment(Attachments attachment);
