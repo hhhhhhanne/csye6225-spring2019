@@ -10,7 +10,7 @@ public interface AttachmentService {
 
     void addAttachment(Attachments attachment);
 
-    void updateByAttachmentId(Attachments attachment);
+    void updateByAttachment(Attachments attachment);
 
     void deleteByAttachmentId(String attachmentId);
 }

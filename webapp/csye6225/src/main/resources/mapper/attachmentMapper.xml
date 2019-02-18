@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.neu.xswl.csye6225.dao.AttachmentDao">
+    <insert id="addAttachment" parameterType="edu.neu.xswl.csye6225.pojo.Attachments">
+        insert into attachments (attachmentId, url, noteId)
+        values (#{attachmentId}, #{url}, #{noteId})
+    </insert>
+    <select id="selectByNoteId" resultType="edu.neu.xswl.csye6225.pojo.Attachments">
+        select
+            attachmentId,
+            url,
+            noteId
+        from attachments
+        where noteId = #{noteId}
+    </select>
+
+    <delete id="deleteByAttachmentId" parameterType="String">
+        delete from attachments
+        where attachmentId = #{attachmentId}
+    </delete>
+
+    <update id="updateByAttachment" parameterType="edu.neu.xswl.csye6225.pojo.Attachments">
+        update attachments
+        <set><if test="url!=null">url = #{url},</if></set>
+        where attachmentId = #{attachmentId}
+    </update>
+</mapper>
