@@ -4,6 +4,9 @@
   "Parameters": {
     "StackName": {
       "Type": "String"
+    },
+    "AMIInageId": {
+      "Type": "String"
     }
   },
   "Resources": {
@@ -134,7 +137,7 @@
           "Ref": "vpc"
         },
         "CidrBlock": "10.0.1.0/24",
-        "AvailabilityZone": "us-east-1b",
+        "AvailabilityZone": "us-east-1a",
         "MapPublicIpOnLaunch": "true",
         "Tags": [
           {
@@ -226,6 +229,68 @@
             "CidrIp": "0.0.0.0/0"
           }
         ]
+      }
+    },
+    "DynamoDB": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "csye6225",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ]
+      }
+    },
+    "CSYE6225Volume" : {
+      "Type" : "AWS::EC2::Volume",
+      "Properties" : {
+        "VolumeType": "gp2",
+        "Size" : "20",
+        "AvailabilityZone" : "us-east-1a"
+      }
+    },
+    "EC2Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId" : {
+          "Ref": "AMIInageId"
+        },
+        "AvailabilityZone": "us-east-1a",
+        "InstanceType": "t2.micro",
+        "DisableApiTermination" : false,
+        "Volumes" : [
+          {
+            "VolumeId" : { "Ref" : "CSYE6225Volume" },
+            "Device" : "/dev/sdm"
+          }
+        ],
+        "SubnetId": { "Ref":  "Subnet1" },
+        "SecurityGroupIds": [{ "Ref": "WebAppSecurityGroup" }]
+      }
+    },
+    "MyDB" : {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties" : {
+        "DBName" : "csye6225",
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.t2.medium",
+        "Engine": "MySQL",
+        "EngineVersion": "5.6.61",
+        "MasterUsername": "csye6225master",
+        "MasterUserPassword": "csye6225password",
+        "DBSubnetGroupName": { "Ref":  "DbSecurityGroup" },
+        "PubliclyAccessible" : true,
+        "SourceDBInstanceIdentifier": "csye6225-spring2019",
+        "MultiAZ": false
       }
     }
   }
