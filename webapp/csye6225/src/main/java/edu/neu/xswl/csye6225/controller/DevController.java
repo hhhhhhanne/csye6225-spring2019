@@ -292,10 +292,9 @@ public class DevController {
         String fileName = file.getOriginalFilename();
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
-        String filePath = null;
+        String filePath = relativePath + folder;
 
         if (user.getUserId().equals(note.getUserId()) && attachment.getNoteId().equals(id)) {
-            attachmentService.updateByAttachment(attachment);
             String keyName = S3uploadUtil.getKeyname(oldPath);
             S3uploadUtil.deleteObject(keyName, S3uploadUtil.bucketName);
             try {
@@ -310,12 +309,6 @@ public class DevController {
         String keyName = fileName;
         File fileToUpload = null;
 
-        //get filePath
-        try {
-            filePath = saveFile(file, relativePath + folder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         //convert multiFile to file
         try {
@@ -338,6 +331,8 @@ public class DevController {
             e.printStackTrace();
         }
         String s3url = S3uploadUtil.getpublicurl(keyName, S3uploadUtil.bucketName);
+        attachment.setUrl(s3url);
+        attachmentService.updateByAttachment(attachment);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
