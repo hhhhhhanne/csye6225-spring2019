@@ -222,7 +222,9 @@ public class DevController {
 
     @PostMapping(value = "/{id}/attachments", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> postAttachment(@PathVariable("id") String id, @RequestParam(value = "file", required = false) MultipartFile file, Principal principal) {
+    public ResponseEntity<?> postAttachment(@PathVariable("id") String id,
+                                            @RequestParam(value = "file", required = false) MultipartFile file,
+                                            Principal principal) {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
@@ -235,7 +237,7 @@ public class DevController {
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = relativePath + folder;
-//
+
         String keyName = fileName;
         File fileToUpload = null;
         try {
@@ -272,7 +274,10 @@ public class DevController {
 
     @PutMapping(value = "/{id}/attachments/{idAttachments}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> updateAttachment(@PathVariable("id") String id, @PathVariable("idAttachments") String idAttachments, @RequestParam(value = "file", required = false) MultipartFile file, Principal principal) {
+    public ResponseEntity<?> updateAttachment(@PathVariable("id") String id,
+                                              @PathVariable("idAttachments") String idAttachments,
+                                              @RequestParam(value = "file", required = false) MultipartFile file,
+                                              Principal principal) {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
@@ -288,19 +293,11 @@ public class DevController {
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = null;
-        try {
-            filePath = saveFile(file, relativePath + folder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            attachment.setUrl(filePath);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         if (user.getUserId().equals(note.getUserId()) && attachment.getNoteId().equals(id)) {
             attachmentService.updateByAttachment(attachment);
+            String keyName = S3uploadUtil.getKeyname(oldPath);
+            S3uploadUtil.deleteObject(keyName, S3uploadUtil.bucketName);
             try {
                 delete(oldPath);
             } catch (Exception e) {
@@ -310,12 +307,46 @@ public class DevController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
+        String keyName = fileName;
+        File fileToUpload = null;
+
+        //get filePath
+        try {
+            filePath = saveFile(file, relativePath + folder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //convert multiFile to file
+        try {
+            fileToUpload = convertMultiToFile(file, filePath, fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            attachment.setUrl(filePath);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            AmazonS3 s3client = new AmazonS3Client(DefaultAWSCredentialsProviderChain.getInstance());
+//                S3uploadUtil.bucketName = s3client.listBuckets().get(0).getName();
+            s3client.putObject(new PutObjectRequest(S3uploadUtil.bucketName, keyName, fileToUpload));
+            fileToUpload.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String s3url = S3uploadUtil.getpublicurl(keyName, S3uploadUtil.bucketName);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(value = "/{id}/attachments/{idAttachments}", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> deleteAttachment(@PathVariable("id") String id, @PathVariable("idAttachments") String idAttachments, Principal principal) {
+    public ResponseEntity<?> deleteAttachment(@PathVariable("id") String id,
+                                              @PathVariable("idAttachments") String idAttachments,
+                                              Principal principal) {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note = noteService.selectByNoteId(id);
@@ -329,9 +360,9 @@ public class DevController {
         String oldPath = attachments.getUrl();
         if (user.getUserId().equals(note.getUserId()) && attachments.getNoteId().equals(note.getNoteId())) {
             attachmentService.deleteByAttachmentId(idAttachments);
-            String keyname = S3uploadUtil.getKeyname(oldPath);
-            System.out.println("keyname:" + keyname);
-            S3uploadUtil.deleteObject(keyname, S3uploadUtil.bucketName);
+            String keyName = S3uploadUtil.getKeyname(oldPath);
+            System.out.println("keyname:" + keyName);
+            S3uploadUtil.deleteObject(keyName, S3uploadUtil.bucketName);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
