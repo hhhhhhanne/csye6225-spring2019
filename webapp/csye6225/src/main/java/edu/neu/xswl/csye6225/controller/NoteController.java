@@ -98,6 +98,10 @@ public class NoteController {
             return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
         }
 
+        if(note.getTitle()==null || note.getTitle().equals("")){
+            jsonObject.put("message", "Title is null");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
 
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
         note.setCreatedOn(current);
@@ -140,6 +144,10 @@ public class NoteController {
             return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
         }
 
+        if(newNote.getTitle()==null || newNote.getTitle().equals("")){
+            jsonObject.put("message", "Title is null");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
 
         String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
         newNote.setLastUpdatedOn(current);
