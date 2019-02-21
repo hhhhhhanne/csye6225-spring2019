@@ -21,7 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -34,13 +36,7 @@ import java.io.*;
 public class S3uploadUtil {
     @Autowired
     public static Environment env;
-//    final static String bucket_name="web-app.csye6225-spring2018-lubo.me";
-//    private static String _awsAccessKey = "AKIAIMVPNDDIYKEX3DEQ";
-//
-//    private static String _awsSecretKey = "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";
-//
-//    private static AWSCredentials credentials = new BasicAWSCredentials(_awsAccessKey, _awsSecretKey);
-//    final static AmazonS3 s3client = new AmazonS3Client(credentials);
+
 
     public final static AmazonS3 s3client = new AmazonS3Client(DefaultAWSCredentialsProviderChain.getInstance());
 
@@ -52,14 +48,14 @@ public class S3uploadUtil {
         //获取一个request
         GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(
                 bucketname, keyName);
-        Date expirationDate = null;
-        try {
-            expirationDate = new SimpleDateFormat("yyyy-MM-dd").parse("2019-02-23");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //设置过期时间
-        urlRequest.setExpiration(expirationDate);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.DATE, 5);
+        Date expiredDate = c.getTime();
+
+        urlRequest.setExpiration(expiredDate);
         //生成公用的url
         URL url = s3client.generatePresignedUrl(urlRequest);
         System.out.println("=========URL=================" + url);
