@@ -157,6 +157,41 @@
         ]
       }
     },
+    "Subnet3": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "vpc"
+        },
+        "CidrBlock": "10.0.2.0/24",
+        "AvailabilityZone": "us-east-1b",
+        "MapPublicIpOnLaunch": "true",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Ref": "AWS::StackName"
+                  },
+                  "-csye6225-Subnet3"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "myDBSubnetGroup" : {
+      "Type" : "AWS::RDS::DBSubnetGroup",
+      "Properties" : {
+        "DBSubnetGroupDescription" : "CSYE6225 RDS Subnet Group",
+        "DBSubnetGroupName" : "RDSsubnetGroup",
+        "SubnetIds" : [ {"Ref": "Subnet2"}, {"Ref": "Subnet3"} ]
+      }
+    },
     "Subnet1RouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
@@ -284,12 +319,12 @@
         "AllocatedStorage": "5",
         "DBInstanceClass": "db.t2.medium",
         "Engine": "MySQL",
-        "EngineVersion": "5.6.61",
+        "EngineVersion": "5.6",
         "MasterUsername": "csye6225master",
         "MasterUserPassword": "csye6225password",
-        "DBSubnetGroupName": { "Ref":  "DbSecurityGroup" },
+        "DBSubnetGroupName": { "Ref":  "myDBSubnetGroup" },
         "PubliclyAccessible" : true,
-        "SourceDBInstanceIdentifier": "csye6225-spring2019",
+        "DBInstanceIdentifier": "csye6225-spring2019",
         "MultiAZ": false
       }
     }
