@@ -173,10 +173,12 @@ public class DevController {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note;
+        List<Attachments> attachmentList;
         //If note not exist, send BAD_REQUEST
         try {
             note = noteService.selectByNoteId(id);
             noteService.selectByNoteId(id).getNoteId();
+            attachmentList = attachmentService.selectByNoteId(id);
         } catch (Exception e) {
             jsonObject.put("message", "note does not exist");
             return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
@@ -189,6 +191,13 @@ public class DevController {
 
         //If exist, delete
         noteService.deleteByNoteId(id);
+
+        for(Attachments attachments: attachmentList){
+            String path = attachments.getUrl();
+            String keyName = S3uploadUtil.getKeyname(path);
+            System.out.println("keyname:" + keyName);
+            S3uploadUtil.deleteObject(keyName, S3uploadUtil.bucketName);
+        }
 
         //If deleted successfully, send NO_CONTENT
         return new ResponseEntity<>(jsonObject, HttpStatus.NO_CONTENT);

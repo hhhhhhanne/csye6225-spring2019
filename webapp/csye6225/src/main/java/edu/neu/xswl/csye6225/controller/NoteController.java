@@ -167,10 +167,12 @@ public class NoteController {
         Users user = userService.getUserByUsername(principal.getName());
 
         Notes note;
+        List<Attachments> attachmentsList;
         //If note not exist, send BAD_REQUEST
         try {
             note = noteService.selectByNoteId(id);
             noteService.selectByNoteId(id).getNoteId();
+            attachmentsList = attachmentService.selectByNoteId(id);
         } catch (Exception e) {
             jsonObject.put("message", "note does not exist");
             return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
@@ -183,6 +185,9 @@ public class NoteController {
 
         //If exist, delete
         noteService.deleteByNoteId(id);
+
+        for(Attachments attachments: attachmentsList)
+            delete(attachments.getUrl());
 
         //If deleted successfully, send NO_CONTENT
         return new ResponseEntity<>(jsonObject, HttpStatus.NO_CONTENT);
