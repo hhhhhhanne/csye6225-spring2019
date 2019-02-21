@@ -12,6 +12,7 @@ import edu.neu.xswl.csye6225.service.UserService;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@Profile("default")
 @RequestMapping(value = "/note")
 public class NoteController {
 
