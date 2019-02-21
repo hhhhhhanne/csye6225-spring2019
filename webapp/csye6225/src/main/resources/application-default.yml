@@ -2,6 +2,8 @@ server:
   port: 8081
 
 spring:
+  profiles:
+    active: default
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
@@ -13,3 +15,5 @@ spring:
 mybatis:
   typeAliasesPackage: edu.neu.xswl.csye6225
   mapperLocations: classpath:mapper/**.xml
+
+

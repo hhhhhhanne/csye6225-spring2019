@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/xswl?characterEncoding=utf-8&serverTimezone=UTC
+    username: csye6225master
+    password: csye6225password
+
+
+
+mybatis:
+  typeAliasesPackage: edu.neu.xswl.csye6225
+  mapperLocations: classpath:mapper/**.xml
