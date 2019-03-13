@@ -78,14 +78,7 @@
         ]
       }
     },
-    "CSYE6225Volume" : {
-      "Type" : "AWS::EC2::Volume",
-      "Properties" : {
-        "VolumeType": "gp2",
-        "Size" : "20",
-        "AvailabilityZone" : "us-east-1a"
-      }
-    },
+
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
@@ -95,12 +88,6 @@
         "AvailabilityZone": "us-east-1a",
         "InstanceType": "t2.micro",
         "DisableApiTermination" : false,
-        "Volumes" : [
-          {
-            "VolumeId" : { "Ref" : "CSYE6225Volume" },
-            "Device" : "/dev/sdm"
-          }
-        ],
         "SubnetId": { "Ref":  "AppSubNetId" },
         "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }]
       }
@@ -121,5 +108,6 @@
         "MultiAZ": false
       }
     }
+
   }
 }

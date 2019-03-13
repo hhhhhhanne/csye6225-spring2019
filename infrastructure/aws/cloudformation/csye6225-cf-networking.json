@@ -39,15 +39,7 @@
           {
             "Key": "Name",
             "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-gw"
-                ]
-              ]
+              "Fn::Join": ["",[ {"Ref": "AWS::StackName"},"-csye6225-gw"]]
             }
           }
         ]
