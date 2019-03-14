@@ -89,9 +89,11 @@
         "InstanceType": "t2.micro",
         "DisableApiTermination" : false,
         "SubnetId": { "Ref":  "AppSubNetId" },
-        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }]
+        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
+        "IamInstanceProfile":"EC2InstanceProfile"
       }
     },
+
     "MyDB" : {
       "Type": "AWS::RDS::DBInstance",
       "Properties" : {
