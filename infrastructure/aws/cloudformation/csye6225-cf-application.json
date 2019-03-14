@@ -89,9 +89,17 @@
         "InstanceType": "t2.micro",
         "DisableApiTermination" : false,
         "SubnetId": { "Ref":  "AppSubNetId" },
-        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }]
+        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
+        "IamInstanceProfile":"EC2InstanceProfile",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CSYE6225-CF-DeploymentGroup"
+          }
+        ]
       }
     },
+
     "MyDB" : {
       "Type": "AWS::RDS::DBInstance",
       "Properties" : {

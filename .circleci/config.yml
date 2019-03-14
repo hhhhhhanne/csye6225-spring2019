@@ -16,6 +16,10 @@ jobs:
           command: sudo pip install awscli
 
       - run:
+          name: Set AWS Default Region
+          command: aws configure set default.region us-east-1
+
+      - run:
           name: Build Artifact
           command: |
             cd webapp/csye6225
@@ -46,7 +50,7 @@ jobs:
       - run:
           name: Upload Artifact to S3
           command: |
-            aws s3 sync codedeploy_artifact s3://code-deploy.csye6225-spring2019-liang2.me
+            aws s3 sync codedeploy_artifact s3://${S3_BUCKET_URL}
       - run:
           name: Make CodeDeploy API call
           command: |
@@ -54,4 +58,4 @@ jobs:
       - run:
           name: Deploy from S3
           command: |
-            aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --description "csye6225 create" --s3-location bucket=code-deploy.csye6225-spring2019-liang2.me,bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
+            aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --description "csye6225 create" --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip

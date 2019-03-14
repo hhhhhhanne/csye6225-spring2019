@@ -1,31 +1,29 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Sample CloudFormation Template for CSYE 6225 - Spring 2018",
+  "Description": "Sample CloudFormation Template for CSYE 6225 - Spring 2019",
   "Parameters": {
     "StackName": {
+      "Type": "String"
+    },
+    "BucketName": {
       "Type": "String"
     }
   },
   "Resources": {
 
-    "CodeDeployEC2S3": {
-      "Type": "AWS::IAM::ManagedPolicy",
+    "CodeDeployEC2ServiceRole": {
+      "Type": "AWS::IAM::Role",
       "Properties": {
-        "ManagedPolicyName": "CodeDeploy-EC2-S3",
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": [
-                "s3:Get*",
-                "s3:List*"
-              ],
-              "Effect": "Allow",
-              "Resource": "*"
-            }
-          ]
-        },
-        "Users": ["circleci"]
+        "RoleName": "CodeDeployEC2ServiceRole",
+        "AssumeRolePolicyDocument": { "Version" : "2012-10-17",
+          "Statement": [ {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [ "codedeploy.amazonaws.com" ]
+            },
+            "Action": [ "sts:AssumeRole" ]
+          } ] },
+        "Path": "/"
       }
     },
 
@@ -39,10 +37,12 @@
             {
               "Effect": "Allow",
               "Action": [
-                "s3:PutObject"
+                "s3:PutObject",
+                "s3:List*"
               ],
               "Resource": [
-                "*"
+                {"Fn::Join": ["",[ "arn:aws:s3:::code-deploy.csye6225-spring2019-", {"Ref": "BucketName"},".me/*"]] },
+                {"Fn::Join": ["",[ "arn:aws:s3:::code-deploy.csye6225-spring2019-", {"Ref": "BucketName"},".me"]] }
               ]
             }
           ]
@@ -161,7 +161,7 @@
         "Policies": [
           {
             "PolicyName": "AWSCodeDeployRole",
-            "PolicyDocument":{
+            "PolicyDocument": {
               "Version": "2012-10-17",
               "Statement": [
                 {
@@ -211,11 +211,42 @@
                 }
               ]
             }
-          }
-        ]
+          }]
       }
     },
 
+    "CodeDeployEC2S3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn" : "CodeDeployEC2ServiceRole",
+      "Properties": {
+        "ManagedPolicyName": "CodeDeploy-EC2-S3",
+        "PolicyDocument":  {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": ["CodeDeployEC2ServiceRole"]
+      }
+    },
+
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ {
+          "Ref": "CodeDeployEC2ServiceRole"
+        } ],
+        "InstanceProfileName": "EC2InstanceProfile"
+      }
+    },
 
     "CodeDeployApplication": {
       "Type" : "AWS::CodeDeploy::Application",
@@ -239,7 +270,8 @@
           "Type" : "KEY_AND_VALUE",
           "Value" : "CSYE6225-CF-DeploymentGroup"
         }],
-        "ServiceRoleArn": {  "Fn::GetAtt": ["CodeDeployServiceRole","Arn"] }
+        "ServiceRoleArn": {  "Fn::GetAtt": ["CodeDeployServiceRole","Arn"] },
+        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce"
       }
     }
 
