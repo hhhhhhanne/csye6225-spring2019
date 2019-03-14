@@ -18,6 +18,13 @@ jobs:
       - run:
           name: Set AWS Default Region
           command: aws configure set default.region us-east-1
+      - run:
+          name: Set AWS Access Key
+          command: aws configure set aws_access_key_id default_access_key
+      - run:
+          name: Set AWS Se Key
+          command: aws configure set aws_secret_access_key default_secret_key
+
 
       - run:
           name: Build Artifact
