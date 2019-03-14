@@ -4,6 +4,9 @@
   "Parameters": {
     "StackName": {
       "Type": "String"
+    },
+    "BucketName": {
+      "Type": "String"
     }
   },
   "Resources": {
@@ -24,28 +27,6 @@
       }
     },
 
-    "CodeDeployEC2S3": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "Properties": {
-        "ManagedPolicyName": "CodeDeploy-EC2-S3",
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": [
-                "s3:Get*",
-                "s3:List*"
-              ],
-              "Effect": "Allow",
-              "Resource": "*"
-            }
-          ]
-        },
-        "Users": ["circleci"],
-        "Roles": ["CodeDeployEC2ServiceRole"]
-      }
-    },
-
     "CircleCIUploadToS3": {
       "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
@@ -56,10 +37,12 @@
             {
               "Effect": "Allow",
               "Action": [
-                "s3:PutObject"
+                "s3:PutObject",
+                "s3:List*"
               ],
               "Resource": [
-                "*"
+                {"Fn::Join": ["",[ "arn:aws:s3:::code-deploy.csye6225-spring2019-", {"Ref": "BucketName"},".me/*"]] },
+                {"Fn::Join": ["",[ "arn:aws:s3:::code-deploy.csye6225-spring2019-", {"Ref": "BucketName"},".me"]] }
               ]
             }
           ]
@@ -231,12 +214,35 @@
           }]
       }
     },
+
+    "CodeDeployEC2S3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn" : "CodeDeployEC2ServiceRole",
+      "Properties": {
+        "ManagedPolicyName": "CodeDeploy-EC2-S3",
+        "PolicyDocument":  {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": ["CodeDeployEC2ServiceRole"]
+      }
+    },
+
     "EC2InstanceProfile": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
         "Roles": [ {
-          "Ref": "CodeDeployServiceRole"
+          "Ref": "CodeDeployEC2ServiceRole"
         } ],
         "InstanceProfileName": "EC2InstanceProfile"
       }
