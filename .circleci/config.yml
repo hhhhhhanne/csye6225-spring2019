@@ -22,7 +22,7 @@ jobs:
           name: Set AWS Access Key
           command: aws configure set aws_access_key_id default_access_key
       - run:
-          name: Set AWS Se Key
+          name: Set AWS Set Key
           command: aws configure set aws_secret_access_key default_secret_key
 
 
