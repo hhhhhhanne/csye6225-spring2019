@@ -90,7 +90,13 @@
         "DisableApiTermination" : false,
         "SubnetId": { "Ref":  "AppSubNetId" },
         "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
-        "IamInstanceProfile":"EC2InstanceProfile"
+        "IamInstanceProfile":"EC2InstanceProfile",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CSYE6225-CF-DeploymentGroup"
+          }
+        ]
       }
     },
 
