@@ -69,5 +69,5 @@ jobs:
       - run:
           name: My T1
           command: |
-            aws deploy create-deployment-group --application-name CMSTomcatApplication --deployment-group-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --service-role-arn arn:aws:iam::231120968020:role/CodeDeployServiceRole
+            aws deploy create-deployment-group --application-name CMSTomcatApplication --deployment-group-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --service-role-arn arn:aws:iam::231120968020:user/circleci
             aws deploy create-deployment --application-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name CMSTomcatApplication --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
