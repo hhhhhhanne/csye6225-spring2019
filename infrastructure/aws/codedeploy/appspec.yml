@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+
+files:
+  - source: ./build/libs/ROOT.war
+    destination: /var/lib/tomcat7/webapps
+
+hooks:
+  AfterInstall:
+   - location: ./restartTomcat.sh
+     timeout: 180
+     runas: centos
