@@ -30,7 +30,7 @@ jobs:
       - run:
           name: Zip Artifact
           command: |
-            echo "Hello the current build number is s3://${CIRCLE_BUILD_NUM}"
+            echo "Hello the current build number is ${CIRCLE_BUILD_NUM}"
             pwd
             mkdir -p codedeploy_artifact
             cp infrastructure/aws/codedeploy/*.sh .
@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Upload Artifact to S3
           command: |
-            aws s3 sync codedeploy_artifact ${S3_BUCKET_NAME}
+            aws s3 sync codedeploy_artifact ${S3_BUCKET_URL}
       - run:
           name: Make CodeDeploy API call
           command: |
