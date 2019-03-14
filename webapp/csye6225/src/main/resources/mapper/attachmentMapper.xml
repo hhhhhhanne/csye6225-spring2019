@@ -5,6 +5,16 @@
         insert into attachments (attachmentId, url, noteId)
         values (#{attachmentId}, #{url}, #{noteId})
     </insert>
+
+
+    <select id="selectAllAttachments" resultType="edu.neu.xswl.csye6225.pojo.Attachments">
+        select
+            attachmentId,
+            url,
+            noteId
+        from attachments
+    </select>
+
     <select id="selectByNoteId" resultType="edu.neu.xswl.csye6225.pojo.Attachments">
         select
             attachmentId,

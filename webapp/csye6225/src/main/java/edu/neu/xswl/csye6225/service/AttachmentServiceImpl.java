@@ -8,10 +8,25 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service("AttachmentService")
-public class AttachmentServiceImpl implements  AttachmentService {
+public class AttachmentServiceImpl implements AttachmentService {
 
     @Resource
     AttachmentDao attachmentDao;
+
+    @Override
+    public List<Attachments> selectAllAttachments() {
+        return attachmentDao.selectAllAttachments();
+    }
+
+    @Override
+    public boolean isURLUnique(String url) {
+        List<Attachments> attachmentsList = selectAllAttachments();
+        for (Attachments attachments : attachmentsList) {
+            if (attachments.getUrl().indexOf(url) != -1)
+                return false;
+        }
+        return true;
+    }
 
     @Override
     public List<Attachments> selectByNoteId(String noteId) {
