@@ -56,6 +56,6 @@ jobs:
           command: |
             echo "Hello CodeDeploy"
       - run:
-          name: Deploy from S3
+          name: Deploy from S3 
           command: |
             aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --description "csye6225 create" --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
