@@ -234,6 +234,13 @@ public class NoteController {
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = null;
+
+        if(!attachmentService.isURLUnique(fileName)){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "url already exist, please rename it or choose a different file");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
+
         try {
             filePath = saveFile(file, relativePath + folder);
         } catch (IOException e) {
@@ -275,11 +282,24 @@ public class NoteController {
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = null;
+
+        for(Attachments attachments : attachmentService.selectAllAttachments())
+            System.out.println(attachments.getUrl());
+
+        System.out.println(fileName);
+
+        if(!attachmentService.isURLUnique(fileName)){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "url already exist, please rename it or choose a different file");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
+
         try {
             filePath = saveFile(file, relativePath + folder);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
             attachment.setUrl(filePath);
         } catch (Exception e) {
