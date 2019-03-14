@@ -66,7 +66,7 @@ jobs:
       #     name: Deploy from S3 Bucket
       #     command: |
       #       aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --service-role-arn arn:aws:iam::231120968020:role/CodeDeployServiceRole --description "csye6225 create" --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
-      -run:
+      - run:
         name: My T1
         command: |
           aws deploy create-deployment-group
