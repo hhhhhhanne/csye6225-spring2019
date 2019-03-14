@@ -283,11 +283,6 @@ public class NoteController {
         String relativePath = System.getProperty("user.dir");
         String filePath = null;
 
-        for(Attachments attachments : attachmentService.selectAllAttachments())
-            System.out.println(attachments.getUrl());
-
-        System.out.println(fileName);
-
         if(!attachmentService.isURLUnique(fileName)){
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("message", "url already exist, please rename it or choose a different file");
