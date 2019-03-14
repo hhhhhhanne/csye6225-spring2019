@@ -18,7 +18,7 @@ jobs:
       - run:
           name: Build Artifact
           command: |
-            cd webapp
+            cd webapp/csye6225
             pwd
             ls -al
             mvn clean package -DskipTests
