@@ -46,7 +46,7 @@ jobs:
       - run:
           name: Upload Artifact to S3
           command: |
-            aws s3 sync codedeploy_artifact s3://code-deploy.csye6225-spring2019-liang2.me
+            aws s3 sync codedeploy_artifact ${S3_BUCKET_NAME}
       - run:
           name: Make CodeDeploy API call
           command: |
