@@ -62,8 +62,12 @@ jobs:
           name: Make CodeDeploy API call
           command: |
             echo "Hello CodeDeploy"
+      # - run:
+      #     name: Deploy from S3 Bucket
+      #     command: |
+      #       aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --service-role-arn arn:aws:iam::231120968020:role/CodeDeployServiceRole --description "csye6225 create" --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
       - run:
-        name: My T1
-        command: |
-          aws deploy create-deployment-group --application-name CMSTomcatApplication --deployment-group-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --service-role-arn arn:aws:iam::231120968020:role/CodeDeployServiceRole
-          aws deploy create-deployment --application-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name CMSTomcatApplication --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
+          name: My T1
+          command: |
+            aws deploy create-deployment-group --application-name CMSTomcatApplication --deployment-group-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --service-role-arn arn:aws:iam::231120968020:role/CodeDeployServiceRole
+            aws deploy create-deployment --application-name CMSTomcatApplication --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name CMSTomcatApplication --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
