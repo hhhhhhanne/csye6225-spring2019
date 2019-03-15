@@ -79,6 +79,24 @@
       }
     },
 
+    "MyDB" : {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties" : {
+        "DBInstanceIdentifier": "csye6225-spring2019",
+        "DBName" : "csye6225",
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.t2.medium",
+        "Engine": "MySQL",
+        "EngineVersion": "5.6",
+        "MasterUsername": "csye6225master",
+        "MasterUserPassword": "csye6225password",
+        "PubliclyAccessible" : true,
+        "DBSecurityGroups": [{ "Ref": "DbSecurityGroup" }],
+        "DBSubnetGroupName" : { "Ref" :  "DBSubnetGroup" },
+        "MultiAZ": false
+      }
+    },
+
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
@@ -100,7 +118,22 @@
                 "#!/bin/bash",
                 "sudo apt-get update",
                 "sudo service codedeploy-agent start",
-                "sudo service tomcat start"
+                "sudo service tomcat start",
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "echo \"RDS=jdbc:mysql://",
+                      {
+                        "Fn::GetAtt": [
+                          "MyDB",
+                          "Endpoint.Address"
+                        ]
+                      },
+                      ":3306/csye6225\\\"\" >> /home/centos/mysqlsetting.txt \n"
+                    ]
+                  ]
+                }
               ]
             ]
           }
@@ -111,24 +144,6 @@
             "Value": "CSYE6225-CF-DeploymentGroup"
           }
         ]
-      }
-    },
-
-    "MyDB" : {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties" : {
-        "DBInstanceIdentifier": "csye6225-spring2019",
-        "DBName" : "csye6225",
-        "AllocatedStorage": "5",
-        "DBInstanceClass": "db.t2.medium",
-        "Engine": "MySQL",
-        "EngineVersion": "5.6",
-        "MasterUsername": "csye6225master",
-        "MasterUserPassword": "csye6225password",
-        "PubliclyAccessible" : true,
-        "DBSecurityGroups": [{ "Ref": "DbSecurityGroup" }],
-        "DBSubnetGroupName" : { "Ref" :  "DBSubnetGroup" },
-        "MultiAZ": false
       }
     }
 
