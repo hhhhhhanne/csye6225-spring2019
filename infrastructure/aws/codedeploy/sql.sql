@@ -18,6 +18,7 @@
 --
 -- Table structure for table `attachments`
 --
+USE csye6225;
 
 DROP TABLE IF EXISTS `attachments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
