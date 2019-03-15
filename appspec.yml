@@ -8,9 +8,15 @@ files:
     destination: /home/centos
   - source: ./test.sh
     destination: /home/centos
+  - source: ./startJar.sh
+    destination: /home/centos
 
 hooks:
   AfterInstall:
-   - location: ./test.sh
+   - location: home/centos/test.sh
+     timeout: 180
+     runas: centos
+  ApplicationStart:
+   - location: home/centos/startJar.sh
      timeout: 180
      runas: centos
