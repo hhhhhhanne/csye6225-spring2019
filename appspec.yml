@@ -2,15 +2,15 @@ version: 0.0
 os: linux
 
 files:
-  - source: /
+  - source: ./
     destination: /home/centos
 
 hooks:
   AfterInstall:
-   - location: /test.sh
+   - location: test.sh
      timeout: 100
      runas: centos
   ApplicationStart:
-   - location: /startJar.sh
+   - location: startJar.sh
      timeout: 100
      runas: root
