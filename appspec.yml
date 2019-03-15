@@ -2,11 +2,15 @@ version: 0.0
 os: linux
 
 files:
-  - source: ./build/libs/ROOT.war
-    destination: /var/lib/tomcat7/webapps
+  - source: ./sql.sql
+    destination: /home/centos
+  - source: ./webapp/csye6225/target/csye6225-0.0.1-SNAPSHOT.jar
+    destination: /home/centos
+  - source: ./test.sh
+    destination: /home/centos
 
 hooks:
   AfterInstall:
-   - location: ./restartTomcat.sh
+   - location: ./test.sh
      timeout: 180
      runas: centos
