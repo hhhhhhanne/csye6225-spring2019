@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "start "
+echo "start"
 sudo service tomcat stop
 cd ~
 sudo chmod +x csye6225-0.0.1-SNAPSHOT.jar
