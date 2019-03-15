@@ -7,7 +7,7 @@ files:
   - source: ./webapp/csye6225/target/csye6225-0.0.1-SNAPSHOT.jar
     destination: /home/centos
   - source: ./test.sh
-    destionation: /home/centos
+    destination: /home/centos
 
 hooks:
   AfterInstall:
