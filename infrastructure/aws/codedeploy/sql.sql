@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `attachments`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `attachments` (
   `attachmentId` varchar(45) NOT NULL,
-  `url` varchar(1024) DEFAULT NULL,
+  `url` MEDIUMBLOB DEFAULT NULL,
   `noteId` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`attachmentId`),
   KEY `note_attachment_fk_idx` (`noteId`),
