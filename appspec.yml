@@ -12,5 +12,5 @@ files:
 hooks:
   AfterInstall:
    - location: ./test.sh
-     timeout: 300
+     timeout: 180
      runas: centos
