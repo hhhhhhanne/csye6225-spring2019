@@ -149,27 +149,6 @@
       }
     },
 
-    "CodeDeployEC2S3": {
-      "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn" : "CodeDeployEC2ServiceRole",
-      "Properties": {
-        "ManagedPolicyName": "CodeDeploy-EC2-S3",
-        "PolicyDocument":  {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": [
-                "s3:Get*",
-                "s3:List*"
-              ],
-              "Effect": "Allow",
-              "Resource": "*"
-            }
-          ]
-        }
-      }
-    },
-
 
     "CodeDeployEC2ServiceRole": {
       "Type": "AWS::IAM::Role",
@@ -187,6 +166,28 @@
             "Action": [ "sts:AssumeRole" ]
           } ] },
         "Path": "/"
+      }
+    },
+
+    "CodeDeployEC2S3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "DependsOn" : "CodeDeployEC2ServiceRole",
+      "Properties": {
+        "ManagedPolicyName": "CodeDeploy-EC2-S3",
+        "PolicyDocument":  {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        },
+        "Roles": [ { "Ref": "CodeDeployEC2ServiceRole"} ]
       }
     },
 
