@@ -12,5 +12,5 @@ hooks:
      runas: centos
   ApplicationStart:
    - location: startJar.sh
-     timeout: 30
+     timeout: 31
      runas: centos
