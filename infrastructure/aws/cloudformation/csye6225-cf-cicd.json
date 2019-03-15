@@ -149,9 +149,9 @@
       }
     },
 
+
     "CodeDeployEC2S3": {
       "Type": "AWS::IAM::ManagedPolicy",
-      "DependsOn" : "CodeDeployEC2ServiceRole",
       "Properties": {
         "ManagedPolicyName": "CodeDeploy-EC2-S3",
         "PolicyDocument":  {
@@ -160,7 +160,9 @@
             {
               "Action": [
                 "s3:Get*",
-                "s3:List*"
+                "s3:List*",
+                "s3:Put*",
+                "s3:DeleteObject*"
               ],
               "Effect": "Allow",
               "Resource": "*"
@@ -169,7 +171,6 @@
         }
       }
     },
-
 
     "CodeDeployEC2ServiceRole": {
       "Type": "AWS::IAM::Role",
@@ -186,7 +187,8 @@
             },
             "Action": [ "sts:AssumeRole" ]
           } ] },
-        "Path": "/"
+        "Path": "/",
+        "ManagedPolicyArns": [ {"Ref": "CodeDeployEC2S3" }]
       }
     },
 
