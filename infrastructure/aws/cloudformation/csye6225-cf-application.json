@@ -22,6 +22,10 @@
     },
     "DBSecurityGroupId": {
       "Type": "String"
+    },
+    "EC2InstanceProfile": {
+      "Type" : "String",
+      "Default" : ""
     }
   },
   "Resources": {
@@ -90,7 +94,7 @@
         "DisableApiTermination" : false,
         "SubnetId": { "Ref":  "AppSubNetId" },
         "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
-        "IamInstanceProfile":"EC2InstanceProfile",
+        "IamInstanceProfile": { "Ref": "EC2InstanceProfile" },
         "KeyName": "assignment5",
         "UserData": {
           "Fn::Base64": {
