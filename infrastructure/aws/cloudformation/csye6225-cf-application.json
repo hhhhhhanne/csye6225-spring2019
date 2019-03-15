@@ -130,7 +130,7 @@
                           "Endpoint.Address"
                         ]
                       },
-                      ":3306/csye6225\\\" >> /home/centos/mysqlsetting.txt \n"
+                      "/csye6225\\\" >> /home/centos/mysqlsetting.txt \n"
                     ]
                   ]
                 }
