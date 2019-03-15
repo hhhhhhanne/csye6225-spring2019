@@ -13,10 +13,10 @@ files:
 
 hooks:
   AfterInstall:
-   - location: home/centos/test.sh
+   - location: /home/centos/test.sh
      timeout: 180
      runas: centos
   ApplicationStart:
-   - location: home/centos/startJar.sh
+   - location: /home/centos/startJar.sh
      timeout: 180
      runas: centos
