@@ -48,7 +48,7 @@
         },
         "DBSecurityGroupIngress": [
           {
-            "EC2SecurityGroupId": { "Ref": "DBSecurityGroupId" }
+            "EC2SecurityGroupId": { "Ref": "AppSecurityGroupId" }
           }
         ],
         "Tags": [
@@ -91,6 +91,20 @@
         "SubnetId": { "Ref":  "AppSubNetId" },
         "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
         "IamInstanceProfile":"EC2InstanceProfile",
+        "KeyName": "assignment5",
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "\n",
+              [
+                "#!/bin/bash",
+                "sudo apt-get update",
+                "sudo service codedeploy-agent start",
+                "sudo service tomcat start"
+              ]
+            ]
+          }
+        },
         "Tags": [
           {
             "Key": "Name",
@@ -103,6 +117,7 @@
     "MyDB" : {
       "Type": "AWS::RDS::DBInstance",
       "Properties" : {
+        "DBInstanceIdentifier": "csye6225-spring2019",
         "DBName" : "csye6225",
         "AllocatedStorage": "5",
         "DBInstanceClass": "db.t2.medium",
