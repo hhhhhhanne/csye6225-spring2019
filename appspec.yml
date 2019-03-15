@@ -11,6 +11,6 @@ files:
 
 hooks:
   AfterInstall:
-   - location: /home/centos/test.sh
+   - location: ./test.sh
      timeout: 180
      runas: centos
