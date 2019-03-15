@@ -138,7 +138,7 @@
                   "Fn::Join": [
                     "",
                     [
-                      "echo ",
+                      "echo \"",
                       {
                         "Fn::GetAtt": [
                           "MyDB",
