@@ -2,20 +2,23 @@ version: 0.0
 os: linux
 
 files:
-  - source: ./sql.sql
+  - source: /
     destination: /home/centos
-  - source: ./webapp/csye6225/target/csye6225-0.0.1-SNAPSHOT.jar
-    destination: /home/centos
-  - source: ./test.sh
-    destination: /home/centos
-  - source: ./startJar.sh
-    destination: /home/centos
+  # - source: ./sql.sql
+  #   destination: /home/centos
+  # - source: ./webapp/csye6225/target/csye6225-0.0.1-SNAPSHOT.jar
+  #   destination: /home/centos
+  # - source: ./test.sh
+  #   destination: /home/centos
+  # - source: ./startJar.sh
+  #   destination: /home/centos
 
 hooks:
   AfterInstall:
-   - location: ./test.sh
+   - location: /test.sh
      timeout: 100
      runas: centos
   ApplicationStart:
-   - location: ./startJar.sh
+   - location: /startJar.sh
+     timeout: 100
      runas: centos
