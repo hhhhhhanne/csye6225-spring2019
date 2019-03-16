@@ -1,7 +1,5 @@
 #!/bin/bash
 cd ~
-pwd
+url=$(cat mysqlsetting.txt | sed -r 's/.*"(.+)".*/\1/')
 cd ~/webapp/csye6225/target
-pwd
-ls
-java -jar csye6225-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.datasource.url=jdbc:mysql://csye6225-spring2019.cudakpsmqak8.us-east-1.rds.amazonaws.com/csye6225  --server.port=8080 >/dev/null 2>&1 &
+java -jar csye6225-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev --spring.datasource.url=jdbc:mysql://$url/csye6225  --server.port=8080 >/dev/null 2>&1 &
