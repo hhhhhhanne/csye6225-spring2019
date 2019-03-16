@@ -29,7 +29,7 @@ public class IndexController {
     @Autowired
     PasswordUtilImpl passwordUtil;
 
-    @RequestMapping(value = "/hane", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> welcome() {
 
