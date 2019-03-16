@@ -123,17 +123,18 @@
                   "Fn::Join": [
                     "",
                     [
-                      "echo \"RDS_ENDPOINT=\\\"\\${RDS_ENDPOINT}",
+                      "echo \"export RDS_ENDPOINT=\\\"\\${RDS_ENDPOINT}",
                       {
                         "Fn::GetAtt": [
                           "MyDB",
                           "Endpoint.Address"
                         ]
                       },
-                      "\\\"\", >> /home/centos/mysql_env_var.sh \n"
+                      "\\\"\" >> /home/centos/mysql_env_var.sh \n"
                     ]
                   ]
-                }
+                },
+                "sudo ./home/centos/mmysql_env_var.sh"
               ]
             ]
           }
