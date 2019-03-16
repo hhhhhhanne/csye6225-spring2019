@@ -44,7 +44,7 @@ public class IndexController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/user/registerhane", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> registerPost(@RequestBody String jsonUser) {
         Users user = JSON.parseObject(jsonUser, Users.class);
