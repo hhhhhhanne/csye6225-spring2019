@@ -123,29 +123,14 @@
                   "Fn::Join": [
                     "",
                     [
-                      "echo \"RDS=jdbc:mysql://",
+                      "echo \"RDS_ENDPOINT=\\\"\\${RDS_ENDPOINT}",
                       {
                         "Fn::GetAtt": [
                           "MyDB",
                           "Endpoint.Address"
                         ]
                       },
-                      "/csye6225\\\" >> /home/centos/mysqlsetting.txt \n"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "echo \"",
-                      {
-                        "Fn::GetAtt": [
-                          "MyDB",
-                          "Endpoint.Address"
-                        ]
-                      },
-                      "/csye6225\\\" >> /home/centos/rds_end_point.txt \n"
+                      "\\\"\", >> /home/centos/mysql_env_var.sh \n"
                     ]
                   ]
                 }
