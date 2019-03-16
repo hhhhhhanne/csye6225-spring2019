@@ -40,7 +40,16 @@ public class S3uploadUtil {
 
     public final static AmazonS3 s3client = new AmazonS3Client(DefaultAWSCredentialsProviderChain.getInstance());
 
-    public final static String bucketName = s3client.listBuckets().get(0).getName();
+    public final static String bucketName = getBucketNameStartwithCSYE6225(s3client.listBuckets());
+           // s3client.listBuckets().get(0).getName();
+
+    public static String getBucketNameStartwithCSYE6225(List<Bucket> bucketList){
+        for(Bucket bucket : bucketList){
+            if(bucket.getName().startsWith("csye6225-spring2019"))
+                return bucket.getName();
+        }
+        return null;
+    }
 
     public static String getpublicurl(String key_name,String bucketname){
         String keyName = key_name;

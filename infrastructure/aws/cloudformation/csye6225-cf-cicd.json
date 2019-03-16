@@ -1,0 +1,238 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Sample CloudFormation Template for CSYE 6225 - Spring 2019",
+  "Parameters": {
+    "StackName": {
+      "Type": "String"
+    },
+    "BucketName": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+
+    "CircleCIUploadToS3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "CircleCI-Upload-To-S3",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:List*"
+              ],
+              "Resource": [
+                {"Fn::Join": ["",[ "arn:aws:s3:::code-deploy.csye6225-spring2019-", {"Ref": "BucketName"},".me/*"]] },
+                {"Fn::Join": ["",[ "arn:aws:s3:::code-deploy.csye6225-spring2019-", {"Ref": "BucketName"},".me"]] }
+              ]
+            }
+          ]
+        },
+        "Users": ["circleci"]
+      }
+    },
+
+    "CirlceCICodeDeploy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "CirlceCI-Code-Deploy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:RegisterApplicationRevision",
+                "codedeploy:GetApplicationRevision"
+              ],
+              "Resource": [
+                {"Fn::Join": ["",[ "arn:aws:codedeploy:us-east-1:", {"Ref": "AWS::AccountId"},":application:csye6225-webapp"]] }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:CreateDeployment",
+                "codedeploy:GetDeployment"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "codedeploy:GetDeploymentConfig"
+              ],
+              "Resource": [
+                {"Fn::Join": ["",[ "arn:aws:codedeploy:us-east-1:", {"Ref": "AWS::AccountId"},":deploymentconfig:CodeDeployDefault.OneAtATime"]] },
+                {"Fn::Join": ["",[ "arn:aws:codedeploy:us-east-1:", {"Ref": "AWS::AccountId"},":deploymentconfig:CodeDeployDefault.HalfAtATime"]] },
+                {"Fn::Join": ["",[ "arn:aws:codedeploy:us-east-1:", {"Ref": "AWS::AccountId"},":deploymentconfig:CodeDeployDefault.AllAtOnce"]] }
+              ]
+            }
+          ]
+        },
+        "Users": ["circleci"]
+      }
+    },
+
+    "CircleciEc2AMI": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "circleci-ec2-ami",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action" : [
+              "ec2:AttachVolume",
+              "ec2:AuthorizeSecurityGroupIngress",
+              "ec2:CopyImage",
+              "ec2:CreateImage",
+              "ec2:CreateKeypair",
+              "ec2:CreateSecurityGroup",
+              "ec2:CreateSnapshot",
+              "ec2:CreateTags",
+              "ec2:CreateVolume",
+              "ec2:DeleteKeyPair",
+              "ec2:DeleteSecurityGroup",
+              "ec2:DeleteSnapshot",
+              "ec2:DeleteVolume",
+              "ec2:DeregisterImage",
+              "ec2:DescribeImageAttribute",
+              "ec2:DescribeImages",
+              "ec2:DescribeInstances",
+              "ec2:DescribeInstanceStatus",
+              "ec2:DescribeRegions",
+              "ec2:DescribeSecurityGroups",
+              "ec2:DescribeSnapshots",
+              "ec2:DescribeSubnets",
+              "ec2:DescribeTags",
+              "ec2:DescribeVolumes",
+              "ec2:DetachVolume",
+              "ec2:GetPasswordData",
+              "ec2:ModifyImageAttribute",
+              "ec2:ModifyInstanceAttribute",
+              "ec2:ModifySnapshotAttribute",
+              "ec2:RegisterImage",
+              "ec2:RunInstances",
+              "ec2:StopInstances",
+              "ec2:TerminateInstances"
+            ],
+            "Resource" : "*"
+          }]
+        },
+        "Users": ["circleci"]
+      }
+    },
+
+    "CodeDeployServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "CodeDeployServiceRole",
+        "AssumeRolePolicyDocument": { "Version" : "2012-10-17",
+          "Statement": [ {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "codedeploy.amazonaws.com",
+                "ec2.amazonaws.com"
+              ]
+            },
+            "Action": [ "sts:AssumeRole" ]
+          } ] },
+        "Path": "/",
+        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole" ]
+      }
+    },
+
+
+    "CodeDeployEC2S3": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "CodeDeploy-EC2-S3",
+        "PolicyDocument":  {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*",
+                "s3:Put*",
+                "s3:DeleteObject*"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    },
+
+    "CodeDeployEC2ServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "CodeDeployEC2ServiceRole",
+        "AssumeRolePolicyDocument": { "Version" : "2012-10-17",
+          "Statement": [ {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "codedeploy.amazonaws.com",
+                "ec2.amazonaws.com"
+              ]
+            },
+            "Action": [ "sts:AssumeRole" ]
+          } ] },
+        "Path": "/",
+        "ManagedPolicyArns": [ {"Ref": "CodeDeployEC2S3" }]
+      }
+    },
+
+    "EC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ {
+          "Ref": "CodeDeployEC2ServiceRole"
+        } ],
+        "InstanceProfileName": "EC2InstanceProfile"
+      }
+    },
+
+    "CodeDeployApplication": {
+      "Type" : "AWS::CodeDeploy::Application",
+      "Properties" : {
+        "ApplicationName" : "csye6225-webapp",
+        "ComputePlatform" : "Server"
+      }
+    },
+
+    "DeploymentGroup":{
+      "Type" : "AWS::CodeDeploy::DeploymentGroup",
+      "Properties" : {
+        "ApplicationName" : { "Ref": "CodeDeployApplication" },
+        "DeploymentGroupName" : "csye6225-webapp-deployment",
+        "DeploymentStyle": {
+          "DeploymentType":  "IN_PLACE",
+          "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+        },
+        "Ec2TagFilters":[{
+          "Key" :"Name",
+          "Type" : "KEY_AND_VALUE",
+          "Value" : "CSYE6225-CF-DeploymentGroup"
+        }],
+        "ServiceRoleArn": {  "Fn::GetAtt": ["CodeDeployServiceRole","Arn"] },
+        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": ["DEPLOYMENT_FAILURE"]
+        }
+      }
+    }
+
+  }
+}

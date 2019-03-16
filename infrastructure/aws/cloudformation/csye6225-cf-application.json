@@ -7,261 +7,54 @@
     },
     "AMIInageId": {
       "Type": "String"
+    },
+    "VPCId": {
+      "Type": "String"
+    },
+    "AppSubNetId": {
+      "Type": "String"
+    },
+    "DbSubNetId": {
+      "Type": "String"
+    },
+    "AppSecurityGroupId": {
+      "Type": "String"
+    },
+    "DBSecurityGroupId": {
+      "Type": "String"
     }
   },
   "Resources": {
-    "vpc": {
-      "Type": "AWS::EC2::VPC",
-      "Properties": {
-        "CidrBlock": "10.0.0.0/20",
-        "EnableDnsSupport": "true",
-        "EnableDnsHostnames": "true",
-        "InstanceTenancy": "default",
-        "Tags": [
+    "DBSubnetGroup":{
+      "Type":"AWS::RDS::DBSubnetGroup",
+      "Properties":{
+        "DBSubnetGroupDescription":"description",
+        "SubnetIds":[
           {
-            "Key": "Name",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-vpc"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "InternetGateway": {
-      "Type": "AWS::EC2::InternetGateway",
-      "Properties": {
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-gw"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "AttachGateway": {
-      "Type": "AWS::EC2::VPCGatewayAttachment",
-      "Properties": {
-        "VpcId": {
-          "Ref": "vpc"
-        },
-        "InternetGatewayId": {
-          "Ref": "InternetGateway"
-        }
-      }
-    },
-    "publicRouteTable": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": {
-          "Ref": "vpc"
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-rt"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "myRoute": {
-      "Type": "AWS::EC2::Route",
-      "Properties": {
-        "RouteTableId": {
-          "Ref": "publicRouteTable"
-        },
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": {
-          "Ref": "InternetGateway"
-        }
-      }
-    },
-    "Subnet1": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "VpcId": {
-          "Ref": "vpc"
-        },
-        "CidrBlock": "10.0.0.0/24",
-        "AvailabilityZone": "us-east-1a",
-        "MapPublicIpOnLaunch": "true",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-Subnet1"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "Subnet2": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "VpcId": {
-          "Ref": "vpc"
-        },
-        "CidrBlock": "10.0.1.0/24",
-        "AvailabilityZone": "us-east-1a",
-        "MapPublicIpOnLaunch": "true",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-Subnet2"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "Subnet3": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "VpcId": {
-          "Ref": "vpc"
-        },
-        "CidrBlock": "10.0.2.0/24",
-        "AvailabilityZone": "us-east-1b",
-        "MapPublicIpOnLaunch": "true",
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  {
-                    "Ref": "AWS::StackName"
-                  },
-                  "-csye6225-Subnet3"
-                ]
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "myDBSubnetGroup" : {
-      "Type" : "AWS::RDS::DBSubnetGroup",
-      "Properties" : {
-        "DBSubnetGroupDescription" : "CSYE6225 RDS Subnet Group",
-        "DBSubnetGroupName" : "RDSsubnetGroup",
-        "SubnetIds" : [ {"Ref": "Subnet2"}, {"Ref": "Subnet3"} ]
-      }
-    },
-    "Subnet1RouteTableAssociation": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "SubnetId": {
-          "Ref": "Subnet1"
-        },
-        "RouteTableId": {
-          "Ref": "publicRouteTable"
-        }
-      }
-    },
-    "Subnet2RouteTableAssociation": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "SubnetId": {
-          "Ref": "Subnet2"
-        },
-        "RouteTableId": {
-          "Ref": "publicRouteTable"
-        }
-      }
-    },
-    "WebAppSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "ec2 security group",
-        "VpcId": {
-          "Ref": "vpc"
-        },
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
+            "Ref":"AppSubNetId"
           },
           {
-            "IpProtocol": "tcp",
-            "FromPort": "22",
-            "ToPort": "22",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "443",
-            "ToPort": "443",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "8080",
-            "ToPort": "8080",
-            "CidrIp": "0.0.0.0/0"
+            "Ref":"DbSubNetId"
           }
         ]
       }
     },
     "DbSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
+      "Type": "AWS::RDS::DBSecurityGroup",
       "Properties": {
         "GroupDescription": "security group for db",
-        "VpcId": {
-          "Ref": "vpc"
+        "EC2VpcId": {
+          "Ref": "VPCId"
         },
-        "SecurityGroupIngress": [
+        "DBSecurityGroupIngress": [
           {
-            "IpProtocol": "tcp",
-            "FromPort": "3306",
-            "ToPort": "3306",
-            "CidrIp": "0.0.0.0/0"
+            "EC2SecurityGroupId": { "Ref": "AppSecurityGroupId" }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-DBSecurityGroup"]]}
           }
         ]
       }
@@ -285,14 +78,25 @@
         ]
       }
     },
-    "CSYE6225Volume" : {
-      "Type" : "AWS::EC2::Volume",
+
+    "MyDB" : {
+      "Type": "AWS::RDS::DBInstance",
       "Properties" : {
-        "VolumeType": "gp2",
-        "Size" : "20",
-        "AvailabilityZone" : "us-east-1a"
+        "DBInstanceIdentifier": "csye6225-spring2019",
+        "DBName" : "csye6225",
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.t2.medium",
+        "Engine": "MySQL",
+        "EngineVersion": "5.6",
+        "MasterUsername": "csye6225master",
+        "MasterUserPassword": "csye6225password",
+        "PubliclyAccessible" : true,
+        "DBSecurityGroups": [{ "Ref": "DbSecurityGroup" }],
+        "DBSubnetGroupName" : { "Ref" :  "DBSubnetGroup" },
+        "MultiAZ": false
       }
     },
+
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
@@ -302,31 +106,45 @@
         "AvailabilityZone": "us-east-1a",
         "InstanceType": "t2.micro",
         "DisableApiTermination" : false,
-        "Volumes" : [
-          {
-            "VolumeId" : { "Ref" : "CSYE6225Volume" },
-            "Device" : "/dev/sdm"
+        "SubnetId": { "Ref":  "AppSubNetId" },
+        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
+        "IamInstanceProfile":"EC2InstanceProfile",
+        "KeyName": "assignment5",
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "\n",
+              [
+                "#!/bin/bash",
+                "sudo apt-get update",
+                "sudo service codedeploy-agent start",
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "echo \"RDS=\\\"",
+                      {
+                        "Fn::GetAtt": [
+                          "MyDB",
+                          "Endpoint.Address"
+                        ]
+                      },
+                      "\\\"\" >> /home/centos/mysqlsetting.txt \n"
+                    ]
+                  ]
+                }
+              ]
+            ]
           }
-        ],
-        "SubnetId": { "Ref":  "Subnet1" },
-        "SecurityGroupIds": [{ "Ref": "WebAppSecurityGroup" }]
-      }
-    },
-    "MyDB" : {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties" : {
-        "DBName" : "csye6225",
-        "AllocatedStorage": "5",
-        "DBInstanceClass": "db.t2.medium",
-        "Engine": "MySQL",
-        "EngineVersion": "5.6",
-        "MasterUsername": "csye6225master",
-        "MasterUserPassword": "csye6225password",
-        "DBSubnetGroupName": { "Ref":  "myDBSubnetGroup" },
-        "PubliclyAccessible" : true,
-        "DBInstanceIdentifier": "csye6225-spring2019",
-        "MultiAZ": false
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CSYE6225-CF-DeploymentGroup"
+          }
+        ]
       }
     }
+
   }
 }

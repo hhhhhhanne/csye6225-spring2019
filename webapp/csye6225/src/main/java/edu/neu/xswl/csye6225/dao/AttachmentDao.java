@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface AttachmentDao {
 
+    List<Attachments> selectAllAttachments();
+
     List<Attachments> selectByNoteId(String noteId);
 
     Attachments selectByAttachmentId(String attachmentId);

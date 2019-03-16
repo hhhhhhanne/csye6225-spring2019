@@ -247,6 +247,12 @@ public class DevController {
         String relativePath = System.getProperty("user.dir");
         String filePath = relativePath + folder;
 
+        if(!attachmentService.isURLUnique(fileName)){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "url already exist, please rename it or choose a different file");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
+
         String keyName = fileName;
         File fileToUpload = null;
         try {
@@ -302,6 +308,12 @@ public class DevController {
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = relativePath + folder;
+
+        if(!attachmentService.isURLUnique(fileName)){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("message", "url already exist, please rename it or choose a different file");
+            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
+        }
 
         if (user.getUserId().equals(note.getUserId()) && attachment.getNoteId().equals(id)) {
             String keyName = S3uploadUtil.getKeyname(oldPath);

@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface AttachmentService {
 
+    List<Attachments> selectAllAttachments();
+
+    boolean isURLUnique(String url);
+
     List<Attachments> selectByNoteId(String noteId);
 
     Attachments selectByAttachmentId(String attachmentId);
