@@ -118,34 +118,18 @@
                 "#!/bin/bash",
                 "sudo apt-get update",
                 "sudo service codedeploy-agent start",
-                "sudo service tomcat start",
                 {
                   "Fn::Join": [
                     "",
                     [
-                      "echo \"RDS=jdbc:mysql://",
+                      "echo \"RDS=\\\"",
                       {
                         "Fn::GetAtt": [
                           "MyDB",
                           "Endpoint.Address"
                         ]
                       },
-                      "/csye6225\\\" >> /home/centos/mysqlsetting.txt \n"
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "echo \"",
-                      {
-                        "Fn::GetAtt": [
-                          "MyDB",
-                          "Endpoint.Address"
-                        ]
-                      },
-                      "/csye6225\\\" >> /home/centos/rds_end_point.txt \n"
+                      "\\\"\" >> /home/centos/mysqlsetting.txt \n"
                     ]
                   ]
                 }
