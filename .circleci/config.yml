@@ -1,0 +1,61 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+
+      - run:
+          name: Install packages
+          command: sudo apt-get update && sudo apt-get install wget zip unzip python2.7 python-pip -y
+
+
+      - run:
+          name: Install awscli
+          command: sudo pip install awscli
+
+      - run:
+          name: Set AWS Default Region
+          command: aws configure set default.region us-east-1
+
+      - run:
+          name: Build Artifact
+          command: |
+            cd webapp/csye6225
+            pwd
+            ls -al
+            mvn clean package -DskipTests
+            cd target/
+            ls -al
+            cd ../
+            pwd
+            ls -al
+      - run:
+          name: Zip Artifact
+          command: |
+            echo "Hello the current build number is ${CIRCLE_BUILD_NUM}"
+            pwd
+            mkdir -p codedeploy_artifact
+            cp infrastructure/aws/codedeploy/*.sh .
+            cp infrastructure/aws/codedeploy/*.sql .
+            zip -r csye6225-web-app-${CIRCLE_BUILD_NUM}.zip webapp/csye6225/target/csye6225-0.0.1-SNAPSHOT.jar *.sh *.yml *sql
+            mv csye6225-web-app-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
+            cd codedeploy_artifact
+            ls -al
+            pwd
+            cd ..
+            pwd
+            ls -al
+      - run:
+          name: Upload Artifact to S3
+          command: |
+            aws s3 sync codedeploy_artifact s3://${S3_BUCKET_URL}
+      - run:
+          name: Make CodeDeploy API call
+          command: |
+            echo "Hello CodeDeploy"
+      - run:
+          name: Deploy from S3 Bucket
+          command: |
+            aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --description "csye6225 create" --s3-location bucket=${S3_BUCKET_URL},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip
