@@ -31,7 +31,7 @@ import java.util.UUID;
 
 @RestController
 @Profile("default")
-@RequestMapping(value = "/note")
+@RequestMapping(value = "/notehe")
 public class NoteController {
 
     @Autowired
