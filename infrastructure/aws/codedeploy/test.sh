@@ -8,6 +8,6 @@ sudo mkdir -p ~/webapp/csye6225/target/src/main/resources
 sudo chmod 777 -R ~/webapp/csye6225/target/src/main/resources
 sudo mkdir -p ~/webapp/csye6225/target/log
 sudo touch springboot.log
-sudo chmod 777 -R ~/webapp/csye6225/target/log
+sudo chmod 777 -R ~/webapp/csye6225/target/log/springboot.log
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatch-config.json -s
 sudo systemctl restart amazon-cloudwatch-agent.service
