@@ -149,21 +149,21 @@
                 },
 
                 "cd /etc/systemd/system",
-                "sudo touch cloudwatch.service",
-                "sudo echo '[Unit]' >> cloudwatch.service",
-                "sudo echo 'Description=CloudWatch Service for csye6225' >> cloudwatch.service",
-                "sudo echo 'After=rc-local.service' >> cloudwatch.service",
-                "sudo echo '[Service]' >> cloudwatch.service",
-                "sudo echo 'Type=simple' >> cloudwatch.service",
-                "sudo echo 'Restart=always' >> cloudwatch.service",
-                "sudo echo 'KillMode=process' >> cloudwatch.service",
-                "sudo echo 'TimeoutSec=infinity' >> cloudwatch.service",
-                "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> cloudwatch.service",
-                "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> cloudwatch.service",
+                "sudo touch awslogs.service",
+                "sudo echo '[Unit]' >> awslogs.service",
+                "sudo echo 'Description=Service for CloudWatch Logs agent' >> awslogs.service",
+                "sudo echo 'After=rc-local.service' >> awslogs.service",
+                "sudo echo '[Service]' >> awslogs.service",
+                "sudo echo 'Type=simple' >> awslogs.service",
+                "sudo echo 'Restart=always' >> awslogs.service",
+                "sudo echo 'KillMode=process' >> awslogs.service",
+                "sudo echo 'TimeoutSec=infinity' >> awslogs.service",
+                "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> awslogs.service",
+                "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> awslogs.service",
                 "sudo echo '[Install]' >> awslogs.service",
-                "sudo echo 'WantedBy=multi-user.target' >> cloudwatch.service",
-                "sudo systemctl start cloudwatch.service",
-                "sudo systemctl enable cloudwatch.service"
+                "sudo echo 'WantedBy=multi-user.target' >> awslogs.service",
+                "sudo systemctl start awslogs.service",
+                "sudo systemctl enable awslogs.service"
               ]
             ]
           }
