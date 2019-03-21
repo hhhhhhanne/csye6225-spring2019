@@ -40,8 +40,8 @@ public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> welcome() {
-        logger.info("/welcome.http.get");
-        statsd.incrementCounter("/welcome");
+        statsd.incrementCounter("/welcome.http.get");
+        logger.info("welcome");
 
         HashMap<String, String> response = new HashMap<>();
 
