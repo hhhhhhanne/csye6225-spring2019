@@ -133,7 +133,22 @@
                     ]
                   ]
                 },
-                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatch-config.json -s",
+                "sudo touch /home/centos/awslogs.json",
+                "sudo echo '{\n    \"agent\": {' > /home/centos/awslogs.json",
+                "sudo echo '\"metrics_collection_interval\": 10,' >> /home/centos/awslogs.json",
+                "sudo echo '\"logfile\": \"/var/logs/amazon-cloudwatch-agent.log\"' >> /tmp/awslogs.conf",
+                "sudo echo '},\n    \"logs\": {' >> /home/centos/awslogs.json",
+                "sudo echo '\"logs_collected\": {' >> /home/centos/awslogs.json",
+                "sudo echo '\"files\": {' >> /home/centos/awslogs.json",
+                "sudo echo '\"collect_list\": [\n                    {' >> /home/centos/awslogs.json",
+                "sudo echo '\"file_path\": \"/opt/tomcat/logs/csye6225.log\",' >> /home/centos/awslogs.json",
+                "sudo echo '\"log_group_name\": \"csye6225_spring2019\",' >> /home/centos/awslogs.json",
+                "sudo echo '\"log_stream_name\": \"webapp\",' >> /home/centos/awslogs.json",
+                "sudo echo '}\n                ]\n            }\n        },' >> /home/centos/awslogs.json",
+                "sudo echo '\"log_stream_name\": \"cloudwatch_log_stream\"' >> /home/centos/awslogs.json",
+                "sudo echo '}\n}' >> /home/centos/awslogs.json",
+
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/awslogs.json -s > /home/centos/ctl.txt",
                 "sudo systemctl start amazon-cloudwatch-agent.service",
                 "sudo systemctl enable amazon-cloudwatch-agent.service"
               ]

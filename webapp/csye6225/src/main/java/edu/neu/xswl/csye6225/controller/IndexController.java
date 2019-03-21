@@ -54,6 +54,7 @@ public class IndexController {
     @RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> registerPost(@RequestBody String jsonUser) {
+        logger.info("user register");
         Users user = JSON.parseObject(jsonUser, Users.class);
         HashMap<String, String> response = new HashMap<>();
         String username = user.getUsername();
@@ -61,14 +62,17 @@ public class IndexController {
         String uuid = UUID.randomUUID().toString();
 //        System.out.println(username + password);
         if (null == username || username.equals("") || null == password || password.equals("")) {
+            logger.error("username or password empty");
             response.put("Warning", "Please enter username or password!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         if (!emailValidationUtil.isEmail(username)) {
+            logger.error("username isn't valid");
             response.put("Warning", "Please use a valid email address as your username");
             return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         if (!passwordUtil.isStrongPassword(password)) {
+            logger.error("password isn't valid");
             response.put("Warning", "Your password is too weak!");
             return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -77,10 +81,12 @@ public class IndexController {
         Users user_db = userService.getUserByUsername(username);
         // System.out.println(user_db);
         if (user_db == null) {  // Check is username already exist
+            logger.info("user register successfully");
             userService.addUser(uuid, username, passwordHash);
             response.put("Message", "You have registered successfully!");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
+            logger.error("username duplicate");
             response.put("Warning", "The username already exists!");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
