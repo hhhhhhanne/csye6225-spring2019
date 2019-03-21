@@ -16,4 +16,6 @@ mybatis:
   typeAliasesPackage: edu.neu.xswl.csye6225
   mapperLocations: classpath:mapper/**.xml
 
+logging:
+  file: app-default.log
 

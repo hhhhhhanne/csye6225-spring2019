@@ -1,10 +1,13 @@
 package edu.neu.xswl.csye6225.controller;
 
 import com.alibaba.fastjson.JSON;
+import edu.neu.xswl.csye6225.Csye6225Application;
 import edu.neu.xswl.csye6225.pojo.Users;
 import edu.neu.xswl.csye6225.service.UserService;
 import edu.neu.xswl.csye6225.utils.EmailValidationUtil;
 import edu.neu.xswl.csye6225.utils.PasswordUtilImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,16 +32,20 @@ public class IndexController {
     @Autowired
     PasswordUtilImpl passwordUtil;
 
+    private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> welcome() {
-
+        logger.info("welcome");
         HashMap<String, String> response = new HashMap<>();
 
         if (SecurityContextHolder.getContext().getAuthentication() != null
                 && SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
+            logger.error("not logged in");
             response.put("message", "you are not logged in!!!");
         } else {
+            logger.info("logged in successfully");
             response.put("message", "you are logged in. current time is " + new Date().toString());
         }
 
@@ -47,6 +54,7 @@ public class IndexController {
     @RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> registerPost(@RequestBody String jsonUser) {
+        logger.info("user register");
         Users user = JSON.parseObject(jsonUser, Users.class);
         HashMap<String, String> response = new HashMap<>();
         String username = user.getUsername();
@@ -54,14 +62,17 @@ public class IndexController {
         String uuid = UUID.randomUUID().toString();
 //        System.out.println(username + password);
         if (null == username || username.equals("") || null == password || password.equals("")) {
+            logger.error("username or password empty");
             response.put("Warning", "Please enter username or password!");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         if (!emailValidationUtil.isEmail(username)) {
+            logger.error("username isn't valid");
             response.put("Warning", "Please use a valid email address as your username");
             return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         if (!passwordUtil.isStrongPassword(password)) {
+            logger.error("password isn't valid");
             response.put("Warning", "Your password is too weak!");
             return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY);
         }
@@ -70,10 +81,12 @@ public class IndexController {
         Users user_db = userService.getUserByUsername(username);
         // System.out.println(user_db);
         if (user_db == null) {  // Check is username already exist
+            logger.info("user register successfully");
             userService.addUser(uuid, username, passwordHash);
             response.put("Message", "You have registered successfully!");
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
+            logger.error("username duplicate");
             response.put("Warning", "The username already exists!");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
