@@ -17,3 +17,5 @@ mybatis:
 
 logging:
   file: app-dev.log
+  level:
+    root: INFO
