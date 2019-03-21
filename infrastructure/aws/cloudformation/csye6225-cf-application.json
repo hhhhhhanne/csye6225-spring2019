@@ -134,23 +134,8 @@
                   ]
                 },
                 "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatch-config.json -s",
-
-                "cd /etc/systemd/system",
-                "sudo touch awslogs.service",
-                "sudo echo '[Unit]' >> awslogs.service",
-                "sudo echo 'Description=Service for CloudWatch Logs agent' >> awslogs.service",
-                "sudo echo 'After=rc-local.service' >> awslogs.service",
-                "sudo echo '[Service]' >> awslogs.service",
-                "sudo echo 'Type=simple' >> awslogs.service",
-                "sudo echo 'Restart=always' >> awslogs.service",
-                "sudo echo 'KillMode=process' >> awslogs.service",
-                "sudo echo 'TimeoutSec=infinity' >> awslogs.service",
-                "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> awslogs.service",
-                "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> awslogs.service",
-                "sudo echo '[Install]' >> awslogs.service",
-                "sudo echo 'WantedBy=multi-user.target' >> awslogs.service",
-                "sudo systemctl start awslogs.service",
-                "sudo systemctl enable awslogs.service"
+                "sudo systemctl start mazon-cloudwatch-agent.service",
+                "sudo systemctl enable mazon-cloudwatch-agent.service"
               ]
             ]
           }
