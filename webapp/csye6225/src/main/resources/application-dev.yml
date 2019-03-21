@@ -16,5 +16,4 @@ mybatis:
   mapperLocations: classpath:mapper/**.xml
 
 logging:
-  path: /opt/tomcat/logs/
   file: csye6225.log
