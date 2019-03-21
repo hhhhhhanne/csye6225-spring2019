@@ -188,7 +188,11 @@
             "Action": [ "sts:AssumeRole" ]
           } ] },
         "Path": "/",
-        "ManagedPolicyArns": [ {"Ref": "CodeDeployEC2S3" }]
+        "ManagedPolicyArns": [
+          {"Ref": "CodeDeployEC2S3" },
+          "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+        ]
       }
     },
 
@@ -196,9 +200,9 @@
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
-        "Roles": [ {
-          "Ref": "CodeDeployEC2ServiceRole"
-        } ],
+        "Roles": [
+          { "Ref": "CodeDeployEC2ServiceRole"}
+        ],
         "InstanceProfileName": "EC2InstanceProfile"
       }
     },
