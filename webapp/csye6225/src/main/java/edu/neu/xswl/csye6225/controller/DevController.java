@@ -15,6 +15,8 @@ import edu.neu.xswl.csye6225.service.NoteService;
 import edu.neu.xswl.csye6225.service.UserService;
 import edu.neu.xswl.csye6225.utils.S3uploadUtil;
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
@@ -48,11 +50,11 @@ public class DevController {
     @Autowired
     AttachmentService attachmentService;
 
+    private static final Logger logger = LoggerFactory.getLogger(DevController.class);
 
     @GetMapping(produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> getAllNote(Principal principal) {
-
         Users user = userService.getUserByUsername(principal.getName());
 
         List<JSONObject> jsonObjectList = new ArrayList<>();
