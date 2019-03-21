@@ -134,8 +134,8 @@
                   ]
                 },
                 "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatch-config.json -s",
-                "sudo systemctl start mazon-cloudwatch-agent.service",
-                "sudo systemctl enable mazon-cloudwatch-agent.service"
+                "sudo systemctl start amazon-cloudwatch-agent.service",
+                "sudo systemctl enable amazon-cloudwatch-agent.service"
               ]
             ]
           }
