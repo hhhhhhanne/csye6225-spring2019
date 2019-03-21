@@ -133,20 +133,7 @@
                     ]
                   ]
                 },
-
-                "curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O",
-                {
-                  "Fn::Join": [
-                    " ",
-                    [
-                      "sudo python ./awslogs-agent-setup.py -n -region",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      "-c /home/centos/cloudwatch-config.conf"
-                    ]
-                  ]
-                },
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/cloudwatch-config.json -s",
 
                 "cd /etc/systemd/system",
                 "sudo touch awslogs.service",
