@@ -11,8 +11,11 @@ spring:
     username: csye6225master
     password: csye6225password
 
-
-
 mybatis:
   typeAliasesPackage: edu.neu.xswl.csye6225
   mapperLocations: classpath:mapper/**.xml
+
+logging:
+  path: ~/webapp/csye6225/target/log
+  level:
+    root: INFO
