@@ -16,6 +16,6 @@ mybatis:
   mapperLocations: classpath:mapper/**.xml
 
 logging:
-  file: app-dev.log
+  path: ~/webapp/csye6225/target/log
   level:
     root: INFO
