@@ -36,7 +36,7 @@ import java.util.UUID;
 
 @RestController
 @Profile("dev")
-@RequestMapping(value = "/noteangli")
+@RequestMapping(value = "/note")
 public class DevController {
 
     @Autowired
