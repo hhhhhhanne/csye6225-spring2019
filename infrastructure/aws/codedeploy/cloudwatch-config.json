@@ -40,6 +40,14 @@
           "customized_dimension_key_1": "customized_dimension_value_1",
           "customized_dimension_key_2": "customized_dimension_value_2"
         }
+      },
+      "mem": {
+        "measurement": [
+          "mem_used",
+          "mem_cached",
+          "mem_total"
+        ],
+        "metrics_collection_interval": 1
       }
     }
   }
