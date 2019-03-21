@@ -24,6 +24,22 @@
         "service_address":":8125",
         "metrics_collection_interval":60,
         "metrics_aggregation_interval":300
+      },
+      "cpu": {
+        "resources": [
+          "*"
+        ],
+        "measurement": [
+          {"name": "cpu_usage_idle", "rename": "CPU_USAGE_IDLE", "unit": "Percent"},
+          {"name": "cpu_usage_nice", "unit": "Percent"},
+          "cpu_usage_guest"
+        ],
+        "totalcpu": false,
+        "metrics_collection_interval": 10,
+        "append_dimensions": {
+          "customized_dimension_key_1": "customized_dimension_value_1",
+          "customized_dimension_key_2": "customized_dimension_value_2"
+        }
       }
     }
   }
