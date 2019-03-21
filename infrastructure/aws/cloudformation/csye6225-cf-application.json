@@ -142,8 +142,7 @@
                       "sudo python ./awslogs-agent-setup.py -n -region",
                       {
                         "Ref": "AWS::Region"
-                      },
-                      "-c /tmp/awslogs.conf || error_exit 'Failed to run CloudWatch Logs agent setup'"
+                      }
                     ]
                   ]
                 },
