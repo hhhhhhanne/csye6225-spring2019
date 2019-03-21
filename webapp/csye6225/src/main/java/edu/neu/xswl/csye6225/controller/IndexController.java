@@ -1,7 +1,8 @@
 package edu.neu.xswl.csye6225.controller;
 
 import com.alibaba.fastjson.JSON;
-import edu.neu.xswl.csye6225.Csye6225Application;
+import com.timgroup.statsd.NonBlockingStatsDClient;
+import com.timgroup.statsd.StatsDClient;
 import edu.neu.xswl.csye6225.pojo.Users;
 import edu.neu.xswl.csye6225.service.UserService;
 import edu.neu.xswl.csye6225.utils.EmailValidationUtil;
@@ -34,10 +35,14 @@ public class IndexController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
+    public static final StatsDClient statsd = new NonBlockingStatsDClient("my.prefix", "localhost", 8125);
+
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> welcome() {
-        logger.info("welcome");
+        logger.info("/welcome.http.get");
+        statsd.incrementCounter("/welcome");
+
         HashMap<String, String> response = new HashMap<>();
 
         if (SecurityContextHolder.getContext().getAuthentication() != null
@@ -55,6 +60,7 @@ public class IndexController {
     @ResponseBody
     public ResponseEntity<?> registerPost(@RequestBody String jsonUser) {
         logger.info("user register");
+        statsd.incrementCounter("/user/register.http.post");
         Users user = JSON.parseObject(jsonUser, Users.class);
         HashMap<String, String> response = new HashMap<>();
         String username = user.getUsername();
