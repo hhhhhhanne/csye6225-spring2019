@@ -7,6 +7,7 @@ mysql -h $url -ucsye6225master -p'csye6225password' < sql.sql
 sudo mkdir -p ~/webapp/csye6225/target/src/main/resources
 sudo chmod 777 -R ~/webapp/csye6225/target/src/main/resources
 sudo mkdir -p ~/webapp/csye6225/target/log
+sudo chmod 777 -R ~/webapp/csye6225/target/log
 cd ~/webapp/csye6225/target/log
 sudo touch springboot.log
 sudo chmod 777 -R ~/webapp/csye6225/target/log/springboot.log
