@@ -148,7 +148,7 @@
                 "sudo echo '\"log_stream_name\": \"cloudwatch_log_stream\"' >> /home/centos/awslogs.json",
                 "sudo echo '}\n}' >> /home/centos/awslogs.json",
 
-                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/awslogs.json -s",
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/awslogs.json -s > /home/centos/ctl.txt",
                 "sudo systemctl start amazon-cloudwatch-agent.service",
                 "sudo systemctl enable amazon-cloudwatch-agent.service"
               ]
