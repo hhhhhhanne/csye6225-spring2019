@@ -10,6 +10,8 @@ import edu.neu.xswl.csye6225.service.AttachmentService;
 import edu.neu.xswl.csye6225.service.NoteService;
 import edu.neu.xswl.csye6225.service.UserService;
 import org.apache.http.entity.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.context.annotation.Profile;
@@ -42,6 +44,8 @@ public class NoteController {
 
     @Autowired
     AttachmentService attachmentService;
+
+    private static final Logger logger = LoggerFactory.getLogger(NoteController.class);
 
     @GetMapping(produces = "application/json")
     @ResponseBody

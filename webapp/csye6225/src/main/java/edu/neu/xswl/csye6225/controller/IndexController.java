@@ -1,10 +1,13 @@
 package edu.neu.xswl.csye6225.controller;
 
 import com.alibaba.fastjson.JSON;
+import edu.neu.xswl.csye6225.Csye6225Application;
 import edu.neu.xswl.csye6225.pojo.Users;
 import edu.neu.xswl.csye6225.service.UserService;
 import edu.neu.xswl.csye6225.utils.EmailValidationUtil;
 import edu.neu.xswl.csye6225.utils.PasswordUtilImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,16 +32,20 @@ public class IndexController {
     @Autowired
     PasswordUtilImpl passwordUtil;
 
+    private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> welcome() {
-
+        logger.info("welcome");
         HashMap<String, String> response = new HashMap<>();
 
         if (SecurityContextHolder.getContext().getAuthentication() != null
                 && SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
+            logger.error("not logged in");
             response.put("message", "you are not logged in!!!");
         } else {
+            logger.info("logged in successfully");
             response.put("message", "you are logged in. current time is " + new Date().toString());
         }
 
