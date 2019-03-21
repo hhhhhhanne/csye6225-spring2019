@@ -6,4 +6,4 @@ url=$(cat mysqlsetting.txt | sed -r 's/.*"(.+)".*/\1/')
 mysql -h $url -ucsye6225master -p'csye6225password' < sql.sql
 sudo mkdir -p ~/webapp/csye6225/target/src/main/resources
 sudo chmod 777 -R ~/webapp/csye6225/target/src/main/resources
-sudo systemctl restart mazon-cloudwatch-agent.service
+sudo systemctl restart amazon-cloudwatch-agent.service
