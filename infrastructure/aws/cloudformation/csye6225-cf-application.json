@@ -142,7 +142,8 @@
                       "sudo python ./awslogs-agent-setup.py -n -region",
                       {
                         "Ref": "AWS::Region"
-                      }
+                      },
+                      "-c /home/centos/cloudwatch-config.conf"
                     ]
                   ]
                 },
