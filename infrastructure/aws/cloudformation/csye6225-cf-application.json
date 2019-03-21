@@ -132,7 +132,23 @@
                       "\\\"\" >> /home/centos/mysqlsetting.txt \n"
                     ]
                   ]
-                }
+                },
+                "cd /etc/systemd/system",
+                "sudo touch cloudwatch.service",
+                "sudo echo '[Unit]' >> cloudwatch.service",
+                "sudo echo 'Description=CloudWatch Service for csye6225' >> cloudwatch.service",
+                "sudo echo 'After=rc-local.service' >> cloudwatch.service",
+                "sudo echo '[Service]' >> cloudwatch.service",
+                "sudo echo 'Type=simple' >> cloudwatch.service",
+                "sudo echo 'Restart=always' >> cloudwatch.service",
+                "sudo echo 'KillMode=process' >> cloudwatch.service",
+                "sudo echo 'TimeoutSec=infinity' >> cloudwatch.service",
+                "sudo echo 'PIDFile=/var/awslogs/state/awslogs.pid' >> cloudwatch.service",
+                "sudo echo 'ExecStart=/var/awslogs/bin/awslogs-agent-launcher.sh --start --background --pidfile $PIDFILE --user awslogs --chuid awslogs &amp;' >> cloudwatch.service",
+                "sudo echo '[Install]' >> awslogs.service",
+                "sudo echo 'WantedBy=multi-user.target' >> cloudwatch.service",
+                "sudo systemctl start cloudwatch.service",
+                "sudo systemctl enable cloudwatch.service"
               ]
             ]
           }
