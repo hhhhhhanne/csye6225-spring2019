@@ -8,7 +8,7 @@
       "files": {
         "collect_list": [
           {
-            "file_path": "/home/centos/webapp/csye6225/target/log/logcsye6225.log",
+            "file_path": "/home/centos/webapp/csye6225/target/log/springboot.log",
             "log_group_name": "csye6225_spring2019",
             "log_stream_name": "webapp"
           }
