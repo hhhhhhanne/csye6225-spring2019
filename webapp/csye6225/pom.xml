@@ -124,6 +124,12 @@
             <version>1.11.502</version>
         </dependency>
 
+        <!--https://github.com/tim-group/java-statsd-client-->
+        <dependency>
+            <groupId>com.timgroup</groupId>
+            <artifactId>java-statsd-client</artifactId>
+            <version>3.0.1</version>
+        </dependency>
 
     </dependencies>
 

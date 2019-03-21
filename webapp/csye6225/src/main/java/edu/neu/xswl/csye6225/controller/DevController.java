@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.timgroup.statsd.StatsDClient;
 import edu.neu.xswl.csye6225.pojo.Attachments;
 import edu.neu.xswl.csye6225.pojo.Notes;
 import edu.neu.xswl.csye6225.pojo.Users;
@@ -52,9 +53,12 @@ public class DevController {
 
     private static final Logger logger = LoggerFactory.getLogger(DevController.class);
 
+    private static final StatsDClient statsd = IndexController.statsd;
+
     @GetMapping(produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> getAllNote(Principal principal) {
+        statsd.incrementCounter("/note.http.get");
         Users user = userService.getUserByUsername(principal.getName());
         logger.info("[GET USER NOTES START] Username is: " + user.getUsername());
 
@@ -70,6 +74,7 @@ public class DevController {
     @GetMapping(value = "/{id}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> getNote(@PathVariable("id") String id, Principal principal) {
+        statsd.incrementCounter("/note/{noteid}.http.get");
 
         JSONObject jsonObject = new JSONObject();
 
@@ -102,6 +107,7 @@ public class DevController {
     @PostMapping(produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> createNote(@RequestBody(required = false) String jsonNote, Principal principal) {
+        statsd.incrementCounter("/note.http.post");
 
         logger.info("[POST NOTE START] Username is: " + principal.getName());
 
@@ -139,6 +145,7 @@ public class DevController {
     @ResponseBody
     public ResponseEntity<?> updateNote(@PathVariable("id") String id, Principal principal,
                                         @RequestBody(required = false) String jsonNote) {
+        statsd.incrementCounter("/note/{id}.http.put");
 
         logger.info("[PUT NOTE START] Username is: " + principal.getName());
 
@@ -192,6 +199,7 @@ public class DevController {
     @DeleteMapping(value = "/{id}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> deleteNote(@PathVariable("id") String id, Principal principal) {
+        statsd.incrementCounter("/note/{id}.http.delete");
 
         JSONObject jsonObject = new JSONObject();
 
@@ -236,6 +244,7 @@ public class DevController {
     @GetMapping(value = "/{id}/attachments", produces = "application/json")
     @ResponseBody
     public ResponseEntity<?> getAllAttachments(@PathVariable("id") String id, Principal principal) {
+        statsd.incrementCounter("/note/{id}/attachments.http.get");
         logger.info("[GET ATTACHMENTS START]");
 
         List<JSONObject> jsonObjectList = new ArrayList<>();
@@ -268,6 +277,7 @@ public class DevController {
     public ResponseEntity<?> postAttachment(@PathVariable("id") String id,
                                             @RequestParam(value = "file", required = false) MultipartFile file,
                                             Principal principal) {
+        statsd.incrementCounter("/note/{id}/attachments.http.post");
         logger.info("[POST ATTACHMENTS START]");
         Users user = userService.getUserByUsername(principal.getName());
 
@@ -329,6 +339,7 @@ public class DevController {
                                               @PathVariable("idAttachments") String idAttachments,
                                               @RequestParam(value = "file", required = false) MultipartFile file,
                                               Principal principal) {
+        statsd.incrementCounter("/note/{id}/attachments/{attachmentid}.http.put");
         logger.info("[PUT ATTACHMENTS START]");
         Users user = userService.getUserByUsername(principal.getName());
 
@@ -404,6 +415,7 @@ public class DevController {
     public ResponseEntity<?> deleteAttachment(@PathVariable("id") String id,
                                               @PathVariable("idAttachments") String idAttachments,
                                               Principal principal) {
+        statsd.incrementCounter("/note/{id}/attachments/{attachmentid}.http.delete");
         logger.info("[DELETE ATTACHMENTS START]");
         Users user = userService.getUserByUsername(principal.getName());
 
