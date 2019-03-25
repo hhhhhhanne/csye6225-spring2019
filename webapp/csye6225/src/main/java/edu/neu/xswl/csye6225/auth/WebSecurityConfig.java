@@ -32,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/user/register").permitAll()
+                .antMatchers("/reset").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
@@ -40,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web
                 .ignoring()
+                .antMatchers("/reset")
                 .antMatchers("/user/register");
     }
 
