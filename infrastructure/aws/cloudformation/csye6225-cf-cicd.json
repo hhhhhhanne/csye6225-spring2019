@@ -145,7 +145,10 @@
             "Action": [ "sts:AssumeRole" ]
           } ] },
         "Path": "/",
-        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole" ]
+        "ManagedPolicyArns" : [
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole",
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaFullAccess"
+        ]
       }
     },
 
@@ -237,7 +240,22 @@
           "Events": ["DEPLOYMENT_FAILURE"]
         }
       }
+    },
+
+    "Type" : "AWS::SNS::Topic",
+    "Properties" : {
+      "DisplayName": String,
+      "KmsMasterKeyId": String,
+      "Subscription": [
+        SNS
+        Subscription,
+        ...
+      ],
+      "TopicName": String
     }
+}
+
+
 
   }
 }
