@@ -131,6 +131,12 @@
             <version>3.0.1</version>
         </dependency>
 
+        <!--https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sns/1.11.524-->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sns</artifactId>
+            <version>1.11.524</version>
+        </dependency>
     </dependencies>
 
     <build>
