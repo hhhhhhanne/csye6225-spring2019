@@ -1,6 +1,16 @@
 package edu.neu.xswl.csye6225.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import com.amazonaws.services.sns.model.CreateTopicRequest;
+import com.amazonaws.services.sns.model.CreateTopicResult;
+import com.amazonaws.services.sns.model.PublishRequest;
 import com.timgroup.statsd.NonBlockingStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 import edu.neu.xswl.csye6225.pojo.Users;
@@ -19,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -96,6 +107,26 @@ public class IndexController {
             response.put("Warning", "The username already exists!");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
+    }
 
+    @PostMapping(value = "/reset", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> resetPassword(@RequestBody String jsonUser) {
+        String email = ((Map<String, String>)JSON.parse(jsonUser)).get("email");
+        Users user = userService.getUserByUsername(email);
+        try{
+            user.getUsername();
+        }catch (Exception e){
+            return new ResponseEntity<>(new JSONObject().put("message", "user not exist"), HttpStatus.BAD_REQUEST);
+        }
+
+        AmazonSNS snsClient = AmazonSNSClientBuilder.defaultClient();
+        CreateTopicRequest createTopicRequest = new CreateTopicRequest("reset");
+        CreateTopicResult createTopicResult = snsClient.createTopic(createTopicRequest);
+        String topicArn = createTopicResult.getTopicArn();
+        PublishRequest publishRequest = new PublishRequest(topicArn, email);
+        snsClient.publish(publishRequest);
+
+        return new ResponseEntity<>(new JSONObject().put("message", "sns massage created"), HttpStatus.CREATED);
     }
 }
