@@ -114,10 +114,12 @@ public class IndexController {
     public ResponseEntity<?> resetPassword(@RequestBody String jsonUser) {
         String email = ((Map<String, String>)JSON.parse(jsonUser)).get("email");
         Users user = userService.getUserByUsername(email);
+        JSONObject messageJson = new JSONObject();
         try{
             user.getUsername();
         }catch (Exception e){
-            return new ResponseEntity<>(new JSONObject().put("message", "user not exist"), HttpStatus.BAD_REQUEST);
+            messageJson.put("message", "user not exist");
+            return new ResponseEntity<>(messageJson, HttpStatus.BAD_REQUEST);
         }
 
         AmazonSNS snsClient = AmazonSNSClientBuilder.defaultClient();
@@ -127,6 +129,7 @@ public class IndexController {
         PublishRequest publishRequest = new PublishRequest(topicArn, email);
         snsClient.publish(publishRequest);
 
-        return new ResponseEntity<>(new JSONObject().put("message", "sns massage created"), HttpStatus.CREATED);
+        messageJson.put("message", "sns massage created");
+        return new ResponseEntity<>(messageJson, HttpStatus.CREATED);
     }
 }
