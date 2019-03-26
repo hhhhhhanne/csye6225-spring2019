@@ -161,6 +161,13 @@
           }
         ]
       }
+    },
+    "Topic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "ResetPassword",
+        "TopicName" : "Reset"
+      }
     }
 
   }
