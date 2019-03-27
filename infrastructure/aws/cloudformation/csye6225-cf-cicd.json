@@ -129,11 +129,33 @@
       }
     },
 
+    "CircleciLambdaFunction": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "circleci-ec2-ami",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action" : [
+              "lambda:*",
+              "logs:*",
+              "s3:*",
+              "dynamodb:*"
+            ],
+            "Resource" : "*"
+          }]
+        },
+        "Users": ["circleci"]
+      }
+    },
+
     "CodeDeployServiceRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "RoleName": "CodeDeployServiceRole",
-        "AssumeRolePolicyDocument": { "Version" : "2012-10-17",
+        "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
           "Statement": [ {
             "Effect": "Allow",
             "Principal": {
