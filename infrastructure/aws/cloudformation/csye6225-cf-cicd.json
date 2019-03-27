@@ -290,8 +290,8 @@
         "RoleName":"LambdaExeRole",
         "Path": "/",
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole",
+          "arn:aws:iam::aws:policy/AWSLambdaExecute",
+          "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
           "arn:aws:iam::aws:policy/AmazonSESFullAccess"
         ]
       }
