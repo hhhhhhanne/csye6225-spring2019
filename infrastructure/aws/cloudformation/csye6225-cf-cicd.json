@@ -145,7 +145,7 @@
               "sns:*",
               "events:*",
               "iam:ListRoles",
-              "iam:ListRoles"
+              "iam:PassRole"
             ],
             "Resource" : "*"
           }]
@@ -224,7 +224,8 @@
           "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
           "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
           "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM",
-          "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+          "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
         ]
       }
     },
@@ -317,9 +318,10 @@
         "RoleName":"LambdaExeRole",
         "Path": "/",
         "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/AWSLambdaExecute",
+          "arn:aws:iam::aws:policy/AWSLambdaFullAccess",
           "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
-          "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+          "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+          "arn:aws:iam::aws:policy/IAMFullAccess"
         ]
       }
     }
