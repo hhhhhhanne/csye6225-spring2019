@@ -212,7 +212,8 @@
               "Service": [
                 "codedeploy.amazonaws.com",
                 "ec2.amazonaws.com",
-                "lambda.amazonaws.com"
+                "lambda.amazonaws.com",
+                "sns.amazonaws.com"
               ]
             },
             "Action": [ "sts:AssumeRole" ]
