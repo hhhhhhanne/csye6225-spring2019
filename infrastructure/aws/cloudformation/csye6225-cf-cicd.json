@@ -129,23 +129,52 @@
       }
     },
 
+    "CircleciLambdaFunction": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "circleci-lambda-ami",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action" : [
+              "lambda:*",
+              "logs:*",
+              "s3:*",
+              "dynamodb:*",
+              "sns:*",
+              "events:*",
+              "iam:ListRoles",
+              "iam:PassRole"
+            ],
+            "Resource" : "*"
+          }]
+        },
+        "Users": ["circleci"]
+      }
+    },
+
     "CodeDeployServiceRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "RoleName": "CodeDeployServiceRole",
-        "AssumeRolePolicyDocument": { "Version" : "2012-10-17",
+        "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
           "Statement": [ {
             "Effect": "Allow",
             "Principal": {
               "Service": [
                 "codedeploy.amazonaws.com",
-                "ec2.amazonaws.com"
+                "ec2.amazonaws.com",
+                "lambda.amazonaws.com"
               ]
             },
             "Action": [ "sts:AssumeRole" ]
           } ] },
         "Path": "/",
-        "ManagedPolicyArns" : [ "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole" ]
+        "ManagedPolicyArns" : [
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+        ]
       }
     },
 
@@ -182,13 +211,22 @@
             "Principal": {
               "Service": [
                 "codedeploy.amazonaws.com",
-                "ec2.amazonaws.com"
+                "ec2.amazonaws.com",
+                "lambda.amazonaws.com",
+                "sns.amazonaws.com"
               ]
             },
             "Action": [ "sts:AssumeRole" ]
           } ] },
         "Path": "/",
-        "ManagedPolicyArns": [ {"Ref": "CodeDeployEC2S3" }]
+        "ManagedPolicyArns": [
+          {"Ref": "CodeDeployEC2S3" },
+          "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+          "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM",
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+          "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+        ]
       }
     },
 
@@ -196,9 +234,9 @@
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
         "Path": "/",
-        "Roles": [ {
-          "Ref": "CodeDeployEC2ServiceRole"
-        } ],
+        "Roles": [
+          { "Ref": "CodeDeployEC2ServiceRole"}
+        ],
         "InstanceProfileName": "EC2InstanceProfile"
       }
     },
@@ -231,6 +269,60 @@
           "Enabled": true,
           "Events": ["DEPLOYMENT_FAILURE"]
         }
+      }
+    },
+
+    "CodeDeployLambda": {
+      "Type" : "AWS::CodeDeploy::Application",
+      "Properties" : {
+        "ApplicationName" : "csye6225-lambda",
+        "ComputePlatform" : "Lambda"
+      }
+    },
+
+    "DeploymentLambdaGroup":{
+      "Type" : "AWS::CodeDeploy::DeploymentGroup",
+      "Properties" : {
+        "ApplicationName" : { "Ref": "CodeDeployLambda" },
+        "DeploymentGroupName" : "csye6225-lambda-deployment",
+        "DeploymentStyle": {
+          "DeploymentType":  "BLUE_GREEN",
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
+        },
+        "ServiceRoleArn": {  "Fn::GetAtt": ["CodeDeployServiceRole","Arn"] },
+        "DeploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": ["DEPLOYMENT_FAILURE"]
+        }
+      }
+    },
+
+
+
+    "LambdaExeRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version" : "2012-10-17",
+          "Statement": [ {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "lambda.amazonaws.com"
+              ]
+            },
+            "Action": [ "sts:AssumeRole" ]
+          } ]
+        },
+        "RoleName":"LambdaExeRole",
+        "Path": "/",
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AWSLambdaFullAccess",
+          "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+          "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+          "arn:aws:iam::aws:policy/IAMFullAccess"
+        ]
       }
     }
 
