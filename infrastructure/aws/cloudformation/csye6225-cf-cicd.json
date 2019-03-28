@@ -145,7 +145,7 @@
               "sns:*",
               "events:*",
               "iam:ListRoles",
-              "iam:ListRoles"
+              "iam:PassRole"
             ],
             "Resource" : "*"
           }]
@@ -320,7 +320,8 @@
         "ManagedPolicyArns": [
           "arn:aws:iam::aws:policy/AWSLambdaFullAccess",
           "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
-          "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+          "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+          "arn:aws:iam::aws:policy/IAMFullAccess"
         ]
       }
     }
