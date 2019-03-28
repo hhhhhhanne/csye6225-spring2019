@@ -222,7 +222,8 @@
           {"Ref": "CodeDeployEC2S3" },
           "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
           "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
-          "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM",
+          "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
         ]
       }
     },
