@@ -132,7 +132,7 @@
     "CircleciLambdaFunction": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
-        "PolicyName": "circleci-ec2-ami",
+        "PolicyName": "circleci-lambda-ami",
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [{
@@ -141,7 +141,11 @@
               "lambda:*",
               "logs:*",
               "s3:*",
-              "dynamodb:*"
+              "dynamodb:*",
+              "sns:*",
+              "events:*",
+              "iam:ListRoles",
+              "iam:ListRoles"
             ],
             "Resource" : "*"
           }]
@@ -169,8 +173,7 @@
           } ] },
         "Path": "/",
         "ManagedPolicyArns" : [
-          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole",
-          "arn:aws:iam::aws:policy/AWSLambdaFullAccess"
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
         ]
       }
     },
