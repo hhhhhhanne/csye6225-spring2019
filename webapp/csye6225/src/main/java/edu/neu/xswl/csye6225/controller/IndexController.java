@@ -123,7 +123,7 @@ public class IndexController {
         }
 
         AmazonSNS snsClient = AmazonSNSClientBuilder.defaultClient();
-        CreateTopicRequest createTopicRequest = new CreateTopicRequest("reset");
+        CreateTopicRequest createTopicRequest = new CreateTopicRequest("Reset");
         CreateTopicResult createTopicResult = snsClient.createTopic(createTopicRequest);
         String topicArn = createTopicResult.getTopicArn();
         PublishRequest publishRequest = new PublishRequest(topicArn, email);
