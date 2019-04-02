@@ -81,6 +81,64 @@
       }
     },
 
+    "AppLBTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "HealthCheckIntervalSeconds" : 30,
+        "HealthCheckTimeoutSeconds" : 5,
+        "Name":"AppLBTargetGroup",
+        "HealthyThresholdCount" : 3,
+        "Port" : 8080,
+        "Protocol" : "HTTP",
+        "UnhealthyThresholdCount" : 4,
+        "Matcher" : {
+          "HttpCode" : "200"
+        },
+        "VpcId" : {"Ref" : "VPCId"},
+        "Tags" : [
+          { "Key" : "LBTargetGroup", "Value" : "AppLBTargetGroup" }
+        ]
+      }
+    },
+
+    "AppLoadBalancer" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Scheme":"internet-facing",
+        "Name":"ApplicationLoadBalancer",
+        "Subnets" : [{ "Ref" : "AppSubNetId"}, {"Ref" : "DbSubNetId"}],
+        "Type" : "application"
+      }
+    },
+
+    "AppLBListenerHTTP" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "AppLBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
+        "Port" : "80",
+        "Protocol" : "HTTP"
+      }
+    },
+
+    "AppLBListenerHTTPS" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "Certificates" : [
+          {"CertificateArn" : "arn:aws:acm:us-east-1:509777624845:certificate/92a7ded8-6e5e-4a2f-ad75-3e827cfb1293"} ],
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "AppLBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
+        "Port" : "443",
+        "Protocol" : "HTTPS"
+      }
+    },
+
     "MyDB" : {
       "Type": "AWS::RDS::DBInstance",
       "Properties" : {
@@ -107,7 +165,7 @@
       }
     },
 
-    "AutoScalinggroup":{
+    "AutoScalingGroup":{
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
         "VPCZoneIdentifier" : [
@@ -115,19 +173,14 @@
         ],
         "AvailabilityZones" : [ "us-east-1a" ],
         "Cooldown" : "60",
-        "LaunchConfigurationName" : {"Ref":"asg_launch_config"},
+        "LaunchConfigurationName" : {"Ref":"AsgLaunchConfig"},
         "DesiredCapacity" : "3",
         "MinSize" : "3",
         "MaxSize" : "10",
-        "TargetGroupARNs":[{"Ref": "ALBTargetGroup"}],
+        "TargetGroupARNs":[{"Ref": "AppLBTargetGroup"}],
         "Tags" : [ {
-          "Key" : "auto_scaling_tag1",
-          "Value" : "auto_scaling_1",
-          "PropagateAtLaunch" : "true"
-        }, {
-
-          "Key" : "auto_scaling_tag2",
-          "Value" : "auto_scaling_1",
+          "Key" : "Name",
+          "Value" : "CSYE6225-CF-DeploymentGroup",
           "PropagateAtLaunch" : "true"
         } ]
       }
@@ -138,7 +191,7 @@
       "Properties": {
         "AdjustmentType": "ChangeInCapacity",
         "AutoScalingGroupName": {
-          "Ref": "WebServerGroup"
+          "Ref": "AutoScalingGroup"
         },
         "Cooldown": "60",
         "ScalingAdjustment": "1"
@@ -149,7 +202,7 @@
       "Properties": {
         "AdjustmentType": "ChangeInCapacity",
         "AutoScalingGroupName": {
-          "Ref": "WebServerGroup"
+          "Ref": "AutoScalingGroup"
         },
         "Cooldown": "60",
         "ScalingAdjustment": "-1"
@@ -174,7 +227,7 @@
           {
             "Name": "AutoScalingGroupName",
             "Value": {
-              "Ref": "WebServerGroup"
+              "Ref": "AutoScalingGroup"
             }
           }
         ],
@@ -200,7 +253,7 @@
           {
             "Name": "AutoScalingGroupName",
             "Value": {
-              "Ref": "WebServerGroup"
+              "Ref": "AutoScalingGroup"
             }
           }
         ],
@@ -208,74 +261,17 @@
       }
     },
 
-    "AppLoadBalancer" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
-      "Properties" : {
-        "Scheme":"internet-facing",
-        "Name":"ApplicationLoadBalancer",
-        "Subnets" : [{ "Ref" : "AppSubNetId"},{"Fn::ImportValue":"csye6225-cloud-networking-webSubnet1"}],
-        "SecurityGroups": [{"Fn::ImportValue": "csye6225-cloud-networking-loadbalancer-SecurityGroup"}],
-        "Type" : "application"
-      }
-    },
-
-    "AppLBListenerHTTP" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties" : {
-        "DefaultActions" : [{
-          "Type" : "forward",
-          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
-        }],
-        "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
-        "Port" : "80",
-        "Protocol" : "HTTP"
-      }
-    },
-
-    "AppLBListenerHTTPS" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties" : {
-        "Certificates" : [
-          {"CertificateArn" : "arn:aws:acm:us-east-1:581354222471:certificate/89220500-dc3e-4289-8557-b6d3310a2e6c"} ],
-        "DefaultActions" : [{
-          "Type" : "forward",
-          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
-        }],
-        "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
-        "Port" : "443",
-        "Protocol" : "HTTPS"
-      }
-    },
-
-    "AppLBTargetGroup" : {
-      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties" : {
-        "HealthCheckIntervalSeconds" : 30,
-        "HealthCheckTimeoutSeconds" : 5,
-        "Name":"AppLBTargetGroup",
-        "HealthyThresholdCount" : 3,
-        "Port" : 8080,
-        "Protocol" : "HTTP",
-        "UnhealthyThresholdCount" : 4,
-        "Matcher" : {
-          "HttpCode" : "200"
-        },
-        "VpcId" : {"Ref" : "VPCId"},
-        "Tags" : [
-          { "Key" : "LBTargetGroup", "Value" : "AppLBTargetGroup" }
-        ]
-      }
-    },
-
-    "asglaunchconfig": {
+    "AsgLaunchConfig": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
       "Properties": {
-        "AssociatePublicIpAddress": "true",
-        "ImageId": "ami-66506c1c",
+        "ImageId" : {
+          "Ref": "AMIInageId"
+        },
         "InstanceType": "t2.micro",
-        "KeyName": "assign06",
-        "IamInstanceProfile": "EC2InstanceProfile",
-        "SecurityGroups": [{"Ref":"SecurityGroupID"}],
+        "SubnetId": { "Ref":  "AppSubNetId" },
+        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
+        "IamInstanceProfile":"EC2InstanceProfile",
+        "KeyName": "assignment5",
         "UserData": {
           "Fn::Base64": {
             "Fn::Join": [
