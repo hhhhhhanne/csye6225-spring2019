@@ -1,0 +1,314 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Sample CloudFormation Template",
+  "Parameters": {
+    "StackName": {
+      "Type": "String"
+    },
+    "AMIInageId": {
+      "Type": "String"
+    },
+    "VPCId": {
+      "Type": "String"
+    },
+    "AppSubNetId": {
+      "Type": "String"
+    },
+    "DbSubNetId": {
+      "Type": "String"
+    },
+    "AppSecurityGroupId": {
+      "Type": "String"
+    },
+    "DBSecurityGroupId": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "DBSubnetGroup":{
+      "Type":"AWS::RDS::DBSubnetGroup",
+      "Properties":{
+        "DBSubnetGroupDescription":"description",
+        "SubnetIds":[
+          {
+            "Ref":"AppSubNetId"
+          },
+          {
+            "Ref":"DbSubNetId"
+          }
+        ]
+      }
+    },
+    "DbSecurityGroup": {
+      "Type": "AWS::RDS::DBSecurityGroup",
+      "Properties": {
+        "GroupDescription": "security group for db",
+        "EC2VpcId": {
+          "Ref": "VPCId"
+        },
+        "DBSecurityGroupIngress": [
+          {
+            "EC2SecurityGroupId": { "Ref": "AppSecurityGroupId" }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-DBSecurityGroup"]]}
+          }
+        ]
+      }
+    },
+
+
+    "DynamoDB": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "csye6225",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ]
+      }
+    },
+
+    "MyDB" : {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties" : {
+        "DBInstanceIdentifier": "csye6225-spring2019",
+        "DBName" : "csye6225",
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.t2.medium",
+        "Engine": "MySQL",
+        "EngineVersion": "5.6",
+        "MasterUsername": "csye6225master",
+        "MasterUserPassword": "csye6225password",
+        "PubliclyAccessible" : true,
+        "DBSecurityGroups": [{ "Ref": "DbSecurityGroup" }],
+        "DBSubnetGroupName" : { "Ref" :  "DBSubnetGroup" },
+        "MultiAZ": false
+      }
+    },
+
+    "Topic": {
+      "Type" : "AWS::SNS::Topic",
+      "Properties" : {
+        "DisplayName" : "ResetPassword",
+        "TopicName" : "Reset"
+      }
+    },
+
+    "AutoScalinggroup":{
+      "Type" : "AWS::AutoScaling::AutoScalingGroup",
+      "Properties" : {
+        "VPCZoneIdentifier" : [
+          { "Ref":  "AppSubNetId" }
+        ],
+        "AvailabilityZones" : [ "us-east-1a" ],
+        "Cooldown" : "60",
+        "LaunchConfigurationName" : {"Ref":"asg_launch_config"},
+        "DesiredCapacity" : "3",
+        "MinSize" : "3",
+        "MaxSize" : "10",
+        "TargetGroupARNs":[{"Ref": "ALBTargetGroup"}],
+        "Tags" : [ {
+          "Key" : "auto_scaling_tag1",
+          "Value" : "auto_scaling_1",
+          "PropagateAtLaunch" : "true"
+        }, {
+
+          "Key" : "auto_scaling_tag2",
+          "Value" : "auto_scaling_1",
+          "PropagateAtLaunch" : "true"
+        } ]
+      }
+    },
+
+    "WebServerScaleUpPolicy": {
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "WebServerGroup"
+        },
+        "Cooldown": "60",
+        "ScalingAdjustment": "1"
+      }
+    },
+    "WebServerScaleDownPolicy": {
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": {
+          "Ref": "WebServerGroup"
+        },
+        "Cooldown": "60",
+        "ScalingAdjustment": "-1"
+      }
+    },
+    "CPUAlarmHigh": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "2",
+        "Threshold": "90",
+        "AlarmActions": [
+          {
+            "Ref": "WebServerScaleUpPolicy"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold"
+      }
+    },
+    "CPUAlarmLow": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Statistic": "Average",
+        "Period": "300",
+        "EvaluationPeriods": "2",
+        "Threshold": "70",
+        "AlarmActions": [
+          {
+            "Ref": "WebServerScaleDownPolicy"
+          }
+        ],
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "WebServerGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "LessThanThreshold"
+      }
+    },
+
+    "AppLoadBalancer" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Scheme":"internet-facing",
+        "Name":"ApplicationLoadBalancer",
+        "Subnets" : [{ "Ref" : "AppSubNetId"},{"Fn::ImportValue":"csye6225-cloud-networking-webSubnet1"}],
+        "SecurityGroups": [{"Fn::ImportValue": "csye6225-cloud-networking-loadbalancer-SecurityGroup"}],
+        "Type" : "application"
+      }
+    },
+
+    "AppLBListenerHTTP" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
+        "Port" : "80",
+        "Protocol" : "HTTP"
+      }
+    },
+
+    "AppLBListenerHTTPS" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "Certificates" : [
+          {"CertificateArn" : "arn:aws:acm:us-east-1:581354222471:certificate/89220500-dc3e-4289-8557-b6d3310a2e6c"} ],
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "ALBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
+        "Port" : "443",
+        "Protocol" : "HTTPS"
+      }
+    },
+
+    "AppLBTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "HealthCheckIntervalSeconds" : 30,
+        "HealthCheckTimeoutSeconds" : 5,
+        "Name":"AppLBTargetGroup",
+        "HealthyThresholdCount" : 3,
+        "Port" : 8080,
+        "Protocol" : "HTTP",
+        "UnhealthyThresholdCount" : 4,
+        "Matcher" : {
+          "HttpCode" : "200"
+        },
+        "VpcId" : {"Ref" : "VPCId"},
+        "Tags" : [
+          { "Key" : "LBTargetGroup", "Value" : "AppLBTargetGroup" }
+        ]
+      }
+    },
+
+    "asglaunchconfig": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "AssociatePublicIpAddress": "true",
+        "ImageId": "ami-66506c1c",
+        "InstanceType": "t2.micro",
+        "KeyName": "assign06",
+        "IamInstanceProfile": "EC2InstanceProfile",
+        "SecurityGroups": [{"Ref":"SecurityGroupID"}],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "\n",
+              [
+                "#!/bin/bash",
+                "sudo apt-get update",
+                "sudo service codedeploy-agent start",
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "echo \"RDS=\\\"",
+                      {
+                        "Fn::GetAtt": [
+                          "MyDB",
+                          "Endpoint.Address"
+                        ]
+                      },
+                      "\\\"\" >> /home/centos/mysqlsetting.txt \n"
+                    ]
+                  ]
+                },
+                "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/awslogs.json -s > /home/centos/ctl.txt",
+                "sudo systemctl start amazon-cloudwatch-agent.service",
+                "sudo systemctl enable amazon-cloudwatch-agent.service"
+              ]
+            ]
+          }
+        }
+      }
+    }
+
+
+  }
+}
