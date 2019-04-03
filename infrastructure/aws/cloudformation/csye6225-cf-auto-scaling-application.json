@@ -22,6 +22,12 @@
     },
     "DBSecurityGroupId": {
       "Type": "String"
+    },
+    "UserDomainName": {
+      "Type": "String"
+    },
+    "HostedZoneId": {
+      "Type": "String"
     }
   },
   "Resources": {
@@ -107,6 +113,7 @@
         "Scheme":"internet-facing",
         "Name":"ApplicationLoadBalancer",
         "Subnets" : [{ "Ref" : "AppSubNetId"}, {"Ref" : "DbSubNetId"}],
+        "SecurityGroups" : [ {"Ref" : "AppSecurityGroupId"} ],
         "Type" : "application"
       }
     },
@@ -268,8 +275,7 @@
           "Ref": "AMIInageId"
         },
         "InstanceType": "t2.micro",
-        "SubnetId": { "Ref":  "AppSubNetId" },
-        "SecurityGroupIds": [{ "Ref": "AppSecurityGroupId" }],
+        "SecurityGroups": [{ "Ref": "AppSecurityGroupId" }],
         "IamInstanceProfile":"EC2InstanceProfile",
         "KeyName": "assignment5",
         "UserData": {
@@ -303,8 +309,24 @@
           }
         }
       }
-    }
+    },
 
+    "MyDNSGroup": {
+      "Type" : "AWS::Route53::RecordSetGroup",
+      "Properties" : {
+        "HostedZoneName" : { "Ref": "UserDomainName" },
+        "RecordSets" : [
+          {
+            "Name" : { "Ref": "UserDomainName" },
+            "Type" : "A",
+            "AliasTarget" : {
+              "HostedZoneId" : { "Fn::GetAtt" : ["AppLoadBalancer", "CanonicalHostedZoneID"] },
+              "DNSName" : { "Fn::GetAtt" : ["AppLoadBalancer","DNSName"] }
+            }
+          }
+        ]
+      }
+    },
 
   }
 }
