@@ -288,19 +288,11 @@ public class DevController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Attachments attachment = new Attachments();
-        String fileName = file.getOriginalFilename();
+        String fileName = file.getOriginalFilename()+"-"+UUID.randomUUID().toString().replaceAll("-","");
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = relativePath + folder;
 
-        if (!attachmentService.isURLUnique(fileName)) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "url already exist, please rename it or choose a different file");
-            logger.error("Bad Request, url already exist, please rename it or choose a different file");
-            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
-        }
-
-        String keyName = fileName;
         File fileToUpload = null;
         try {
             fileToUpload = convertMultiToFile(file, filePath, fileName);
@@ -315,13 +307,13 @@ public class DevController {
         if (user.getUserId().equals(note.getUserId())) {
             try {
                 AmazonS3 s3client = new AmazonS3Client(DefaultAWSCredentialsProviderChain.getInstance());
-                s3client.putObject(new PutObjectRequest(S3uploadUtil.bucketName, keyName, fileToUpload));
+                s3client.putObject(new PutObjectRequest(S3uploadUtil.bucketName, fileName, fileToUpload));
                 fileToUpload.delete();
             } catch (Exception e) {
                 logger.error("error, check s3 status and file to upload path");
                 e.printStackTrace();
             }
-            String s3url = S3uploadUtil.getpublicurl(keyName, S3uploadUtil.bucketName);
+            String s3url = S3uploadUtil.getpublicurl(fileName, S3uploadUtil.bucketName);
             attachment.setUrl(s3url);
             attachmentService.addAttachment(attachment);
         } else {
@@ -354,33 +346,19 @@ public class DevController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         String oldPath = attachment.getUrl();
-        String fileName = file.getOriginalFilename();
+        String fileName = file.getOriginalFilename()+"-"+UUID.randomUUID().toString().replaceAll("-","");
         String folder = "/src/main/resources/static";
         String relativePath = System.getProperty("user.dir");
         String filePath = relativePath + folder;
 
-        if (!attachmentService.isURLUnique(fileName)) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("message", "url already exist, please rename it or choose a different file");
-            logger.error("url already exist, please rename it or choose a different file");
-            return new ResponseEntity<>(jsonObject, HttpStatus.BAD_REQUEST);
-        }
-
         if (user.getUserId().equals(note.getUserId()) && attachment.getNoteId().equals(id)) {
             String keyName = S3uploadUtil.getKeyname(oldPath);
             S3uploadUtil.deleteObject(keyName, S3uploadUtil.bucketName);
-            try {
-                delete(oldPath);
-            } catch (Exception e) {
-                logger.error("Delete file from disk error");
-                e.printStackTrace();
-            }
         } else {
             logger.error("Unauthorized, user can not attach file to this note");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        String keyName = fileName;
         File fileToUpload = null;
 
 
@@ -396,13 +374,13 @@ public class DevController {
 
         try {
             AmazonS3 s3client = new AmazonS3Client(DefaultAWSCredentialsProviderChain.getInstance());
-            s3client.putObject(new PutObjectRequest(S3uploadUtil.bucketName, keyName, fileToUpload));
+            s3client.putObject(new PutObjectRequest(S3uploadUtil.bucketName, fileName, fileToUpload));
             fileToUpload.delete();
         } catch (Exception e) {
             logger.error("error, check s3 status and file to upload path");
             e.printStackTrace();
         }
-        String s3url = S3uploadUtil.getpublicurl(keyName, S3uploadUtil.bucketName);
+        String s3url = S3uploadUtil.getpublicurl(fileName, S3uploadUtil.bucketName);
         attachment.setUrl(s3url);
         attachmentService.updateByAttachment(attachment);
 
@@ -458,64 +436,8 @@ public class DevController {
         return jsonObject;
     }
 
-    //save file
-    private String saveFile(MultipartFile file, String path) throws IOException {
 
-        if (!file.isEmpty()) {
-            String filename = file.getOriginalFilename();
-            File filepath = new File(path, filename);
-
-            //if path not exist, create the folder
-            if (!filepath.getParentFile().exists()) {
-                filepath.getParentFile().mkdirs();
-            }
-            String finalPath = path + File.separator + filename;
-
-            //transfer the files into the target folder
-            file.transferTo(new File(finalPath));
-            return finalPath;
-        } else {
-            return "file not exist";
-        }
-    }
-
-    //delete file on file system
-    private void delete(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            System.out.println("[log] Delete File failed:" + file.getName() + "not exist！");
-        } else {
-            if (file.isFile()) file.delete();
-        }
-
-
-    }
-
-    private static void deleteFile(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            System.out.println("[log] Delete File failed:" + file.getName() + "not exist！");
-        } else {
-            if (file.isFile()) file.delete();
-        }
-
-
-    }
-
-    //transfer file
-//    private File transferFile(MultipartFile file, String path) throws IOException {
-//        if (!file.isEmpty()) {
-//            String filename = file.getOriginalFilename();
-//            File convFile = new File(path+File.separator+filename);
-//        } else {
-//            throw new IOException("empty multipartfile");
-//        }
-//    }
     public static File convertMultiToFile(MultipartFile file, String filePath, String fileName) throws IOException {
-//        File dir = new File(filePath);
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
         File convFile = new File(filePath + fileName);
         InputStream ins = file.getInputStream();// new File(file.getOriginalFilename());
         OutputStream os = new FileOutputStream(convFile);
