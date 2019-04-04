@@ -10,7 +10,7 @@ echo "your networking stack name is:" $network
 
 echo "Enter your domain name (skip csye6225-spring2019- and .me), only your name please:"
 read username
-echo "your networking stack name is: "'csye6225-spring2019-'$username'.me'
+echo "domain name is: "'csye6225-spring2019-'$username'.me'
 
 vpcTag=$network'-csye6225-vpc'
 webappSGTag=$network'-csye6225-WebAppSecurityGroup'
