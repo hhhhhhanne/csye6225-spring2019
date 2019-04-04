@@ -235,13 +235,13 @@
     "CPUAlarmHigh": {
       "Type": "AWS::CloudWatch::Alarm",
       "Properties": {
-        "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+        "AlarmDescription": "Scale-up if CPU > 10% for 1 minutes",
         "MetricName": "CPUUtilization",
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
-        "Period": "300",
+        "Period": "30",
         "EvaluationPeriods": "2",
-        "Threshold": "90",
+        "Threshold": "10",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleUpPolicy"
@@ -261,13 +261,13 @@
     "CPUAlarmLow": {
       "Type": "AWS::CloudWatch::Alarm",
       "Properties": {
-        "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+        "AlarmDescription": "Scale-down if CPU < 5% for 1 minutes",
         "MetricName": "CPUUtilization",
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
-        "Period": "300",
+        "Period": "30",
         "EvaluationPeriods": "2",
-        "Threshold": "70",
+        "Threshold": "5",
         "AlarmActions": [
           {
             "Ref": "WebServerScaleDownPolicy"
@@ -302,7 +302,6 @@
               [
                 "#!/bin/bash",
                 "sudo apt-get update",
-                "sudo service codedeploy-agent start",
                 {
                   "Fn::Join": [
                     "",
@@ -318,6 +317,7 @@
                     ]
                   ]
                 },
+                "sudo service codedeploy-agent start",
                 "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/home/centos/awslogs.json -s > /home/centos/ctl.txt",
                 "sudo systemctl start amazon-cloudwatch-agent.service",
                 "sudo systemctl enable amazon-cloudwatch-agent.service"
@@ -367,7 +367,7 @@
       "Properties" : {
         "ApplicationName" : { "Ref": "CodeDeployApplication" },
         "DeploymentGroupName" : "csye6225-webapp-deployment",
-        "AutoScalingGroups" : { "Ref" : "AutoScalingGroup" },
+        "AutoScalingGroups" : [{ "Ref" : "AutoScalingGroup" }],
         "DeploymentStyle": {
           "DeploymentType":  "IN_PLACE",
           "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
