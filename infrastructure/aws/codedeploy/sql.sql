@@ -20,10 +20,10 @@
 --
 USE csye6225;
 
-DROP TABLE IF EXISTS `attachments`;
+-- DROP TABLE IF EXISTS `attachments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `attachments` (
+CREATE TABLE IF NOT EXISTS `attachments` (
   `attachmentId` varchar(45) NOT NULL,
   `url` MEDIUMBLOB DEFAULT NULL,
   `noteId` varchar(256) DEFAULT NULL,
@@ -37,12 +37,12 @@ CREATE TABLE `attachments` (
 -- Table structure for table `notes`
 --
 
-DROP TABLE IF EXISTS `notes`;
+-- DROP TABLE IF EXISTS `notes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `notes` (
+CREATE TABLE IF NOT EXISTS `notes` (
   `noteId` varchar(256) NOT NULL,
-  `content` varchar(45) DEFAULT NULL,
+  `content` varchar(256) DEFAULT NULL,
   `createdOn` datetime DEFAULT NULL,
   `lastUpdatedOn` datetime DEFAULT NULL,
   `userId` varchar(45) DEFAULT NULL,
@@ -57,10 +57,10 @@ CREATE TABLE `notes` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
+-- DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `userId` varchar(45) NOT NULL,
   `username` varchar(256) NOT NULL,
   `password` varchar(256) NOT NULL,
