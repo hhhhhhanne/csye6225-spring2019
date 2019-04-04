@@ -239,7 +239,7 @@
         "MetricName": "CPUUtilization",
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
-        "Period": "30",
+        "Period": "60",
         "EvaluationPeriods": "2",
         "Threshold": "10",
         "AlarmActions": [
@@ -265,7 +265,7 @@
         "MetricName": "CPUUtilization",
         "Namespace": "AWS/EC2",
         "Statistic": "Average",
-        "Period": "30",
+        "Period": "60",
         "EvaluationPeriods": "2",
         "Threshold": "5",
         "AlarmActions": [
