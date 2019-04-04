@@ -241,65 +241,6 @@
       }
     },
 
-    "CodeDeployApplication": {
-      "Type" : "AWS::CodeDeploy::Application",
-      "Properties" : {
-        "ApplicationName" : "csye6225-webapp",
-        "ComputePlatform" : "Server"
-      }
-    },
-
-    "DeploymentGroup":{
-      "Type" : "AWS::CodeDeploy::DeploymentGroup",
-      "Properties" : {
-        "ApplicationName" : { "Ref": "CodeDeployApplication" },
-        "DeploymentGroupName" : "csye6225-webapp-deployment",
-        "DeploymentStyle": {
-          "DeploymentType":  "IN_PLACE",
-          "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
-        },
-        "Ec2TagFilters":[{
-          "Key" :"Name",
-          "Type" : "KEY_AND_VALUE",
-          "Value" : "CSYE6225-CF-DeploymentGroup"
-        }],
-        "ServiceRoleArn": {  "Fn::GetAtt": ["CodeDeployServiceRole","Arn"] },
-        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
-        "AutoRollbackConfiguration": {
-          "Enabled": true,
-          "Events": ["DEPLOYMENT_FAILURE"]
-        }
-      }
-    },
-
-    "CodeDeployLambda": {
-      "Type" : "AWS::CodeDeploy::Application",
-      "Properties" : {
-        "ApplicationName" : "csye6225-lambda",
-        "ComputePlatform" : "Lambda"
-      }
-    },
-
-    "DeploymentLambdaGroup":{
-      "Type" : "AWS::CodeDeploy::DeploymentGroup",
-      "Properties" : {
-        "ApplicationName" : { "Ref": "CodeDeployLambda" },
-        "DeploymentGroupName" : "csye6225-lambda-deployment",
-        "DeploymentStyle": {
-          "DeploymentType":  "BLUE_GREEN",
-          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
-        },
-        "ServiceRoleArn": {  "Fn::GetAtt": ["CodeDeployServiceRole","Arn"] },
-        "DeploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
-        "AutoRollbackConfiguration": {
-          "Enabled": true,
-          "Events": ["DEPLOYMENT_FAILURE"]
-        }
-      }
-    },
-
-
-
     "LambdaExeRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
