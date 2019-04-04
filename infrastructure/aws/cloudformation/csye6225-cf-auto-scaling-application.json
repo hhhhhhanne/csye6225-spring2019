@@ -28,9 +28,24 @@
     },
     "HostedZoneId": {
       "Type": "String"
+    },
+    "ServiceRoleArn": {
+      "Type": "String"
+    },
+    "SSLCertificateArn": {
+      "Type": "String"
     }
   },
   "Resources": {
+    "WAFOWASP" : {
+      "Type" : "AWS::CloudFormation::Stack",
+      "Properties" : {
+        "Tags" : [],
+        "TemplateURL" : "https://s3.amazonaws.com/cf-templates-12q9g4ghf6lju-us-east-1/owasp_10_base_no_csrf.yml",
+        "TimeoutInMinutes" : 20
+      }
+    },
+
     "DBSubnetGroup":{
       "Type":"AWS::RDS::DBSubnetGroup",
       "Properties":{
@@ -135,7 +150,8 @@
       "Type" : "AWS::ElasticLoadBalancingV2::Listener",
       "Properties" : {
         "Certificates" : [
-          {"CertificateArn" : "arn:aws:acm:us-east-1:509777624845:certificate/92a7ded8-6e5e-4a2f-ad75-3e827cfb1293"} ],
+          {"CertificateArn" : { "Ref" : "SSLCertificateArn"}}
+        ],
         "DefaultActions" : [{
           "Type" : "forward",
           "TargetGroupArn" : { "Ref" : "AppLBTargetGroup" }
@@ -175,6 +191,7 @@
     "AutoScalingGroup":{
       "Type" : "AWS::AutoScaling::AutoScalingGroup",
       "Properties" : {
+        "AutoScalingGroupName" : "CSYE6225AutoScalingGroup",
         "VPCZoneIdentifier" : [
           { "Ref":  "AppSubNetId" }
         ],
@@ -325,6 +342,73 @@
             }
           }
         ]
+      }
+    },
+
+    "WAFAssociation": {
+      "Type" : "AWS::WAFRegional::WebACLAssociation",
+      "Properties" : {
+        "ResourceArn" : { "Ref" : "AppLoadBalancer" },
+        "WebACLId" : { "Fn::GetAtt": ["WAFOWASP", "Outputs.wafWebACL"] }
+      }
+    },
+
+
+    "CodeDeployApplication": {
+      "Type" : "AWS::CodeDeploy::Application",
+      "Properties" : {
+        "ApplicationName" : "csye6225-webapp",
+        "ComputePlatform" : "Server"
+      }
+    },
+
+    "DeploymentGroup":{
+      "Type" : "AWS::CodeDeploy::DeploymentGroup",
+      "Properties" : {
+        "ApplicationName" : { "Ref": "CodeDeployApplication" },
+        "DeploymentGroupName" : "csye6225-webapp-deployment",
+        "AutoScalingGroups" : { "Ref" : "AutoScalingGroup" },
+        "DeploymentStyle": {
+          "DeploymentType":  "IN_PLACE",
+          "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+        },
+        "Ec2TagFilters":[{
+          "Key" :"Name",
+          "Type" : "KEY_AND_VALUE",
+          "Value" : "CSYE6225-CF-DeploymentGroup"
+        }],
+        "ServiceRoleArn": { "Ref" : "ServiceRoleArn" },
+        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": ["DEPLOYMENT_FAILURE"]
+        }
+      }
+    },
+
+    "CodeDeployLambda": {
+      "Type" : "AWS::CodeDeploy::Application",
+      "Properties" : {
+        "ApplicationName" : "csye6225-lambda",
+        "ComputePlatform" : "Lambda"
+      }
+    },
+
+    "DeploymentLambdaGroup":{
+      "Type" : "AWS::CodeDeploy::DeploymentGroup",
+      "Properties" : {
+        "ApplicationName" : { "Ref": "CodeDeployLambda" },
+        "DeploymentGroupName" : "csye6225-lambda-deployment",
+        "DeploymentStyle": {
+          "DeploymentType":  "BLUE_GREEN",
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
+        },
+        "ServiceRoleArn": { "Ref" : "ServiceRoleArn" },
+        "DeploymentConfigName": "CodeDeployDefault.LambdaAllAtOnce",
+        "AutoRollbackConfiguration": {
+          "Enabled": true,
+          "Events": ["DEPLOYMENT_FAILURE"]
+        }
       }
     },
 
