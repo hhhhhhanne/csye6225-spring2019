@@ -395,6 +395,23 @@
       }
     },
 
+    "NoWAFDNSGroup": {
+      "Type" : "AWS::Route53::RecordSetGroup",
+      "Properties" : {
+        "HostedZoneName" : { "Ref": "UserDomainName" },
+        "RecordSets" : [
+          {
+            "Name" : { "Fn::Join": ["",[ "nowaf.", {"Ref": "UserDomainName"}]] },
+            "Type" : "A",
+            "AliasTarget" : {
+              "HostedZoneId" : { "Fn::GetAtt" : ["AppLoadBalancerNoWAF", "CanonicalHostedZoneID"] },
+              "DNSName" : { "Fn::GetAtt" : ["AppLoadBalancerNoWAF","DNSName"] }
+            }
+          }
+        ]
+      }
+    },
+
     "WAFAssociation": {
       "Type" : "AWS::WAFRegional::WebACLAssociation",
       "Properties" : {
