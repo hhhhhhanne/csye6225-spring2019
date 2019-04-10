@@ -34,6 +34,9 @@
     },
     "SSLCertificateArn": {
       "Type": "String"
+    },
+    "LBSecurityGroupId": {
+      "Type" : "String"
     }
   },
   "Resources": {
@@ -122,13 +125,44 @@
       }
     },
 
+    "NoWAFAppLBTargetGroup" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties" : {
+        "HealthCheckIntervalSeconds" : 30,
+        "HealthCheckTimeoutSeconds" : 5,
+        "Name":"NoWAFAppLBTargetGroup",
+        "HealthyThresholdCount" : 3,
+        "Port" : 8080,
+        "Protocol" : "HTTP",
+        "UnhealthyThresholdCount" : 4,
+        "Matcher" : {
+          "HttpCode" : "200"
+        },
+        "VpcId" : {"Ref" : "VPCId"},
+        "Tags" : [
+          { "Key" : "LBTargetGroup", "Value" : "NoWAFAppLBTargetGroup" }
+        ]
+      }
+    },
+
     "AppLoadBalancer" : {
       "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties" : {
         "Scheme":"internet-facing",
         "Name":"ApplicationLoadBalancer",
         "Subnets" : [{ "Ref" : "AppSubNetId"}, {"Ref" : "DbSubNetId"}],
-        "SecurityGroups" : [ {"Ref" : "AppSecurityGroupId"} ],
+        "SecurityGroups" : [ {"Ref" : "LBSecurityGroupId"} ],
+        "Type" : "application"
+      }
+    },
+
+    "AppLoadBalancerNoWAF" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Scheme":"internet-facing",
+        "Name":"ApplicationLoadBalancerNoWAF",
+        "Subnets" : [{ "Ref" : "AppSubNetId"}, {"Ref" : "DbSubNetId"}],
+        "SecurityGroups" : [ {"Ref" : "LBSecurityGroupId"} ],
         "Type" : "application"
       }
     },
@@ -157,6 +191,22 @@
           "TargetGroupArn" : { "Ref" : "AppLBTargetGroup" }
         }],
         "LoadBalancerArn" : { "Ref" : "AppLoadBalancer" },
+        "Port" : "443",
+        "Protocol" : "HTTPS"
+      }
+    },
+
+    "NoWAFAppLBListenerHTTPS" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "Certificates" : [
+          {"CertificateArn" : { "Ref" : "SSLCertificateArn"}}
+        ],
+        "DefaultActions" : [{
+          "Type" : "forward",
+          "TargetGroupArn" : { "Ref" : "NoWAFAppLBTargetGroup" }
+        }],
+        "LoadBalancerArn" : { "Ref" : "AppLoadBalancerNoWAF" },
         "Port" : "443",
         "Protocol" : "HTTPS"
       }
@@ -201,7 +251,7 @@
         "DesiredCapacity" : "3",
         "MinSize" : "3",
         "MaxSize" : "10",
-        "TargetGroupARNs":[{"Ref": "AppLBTargetGroup"}],
+        "TargetGroupARNs":[{"Ref": "AppLBTargetGroup"}, { "Ref" : "NoWAFAppLBTargetGroup"}],
         "Tags" : [ {
           "Key" : "Name",
           "Value" : "CSYE6225-CF-DeploymentGroup",
