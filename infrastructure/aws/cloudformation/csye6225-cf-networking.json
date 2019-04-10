@@ -168,6 +168,28 @@
         }
       }
     },
+    "LBEC2SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "lb to ec2 security group",
+        "VpcId": {
+          "Ref": "vpc"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "0.0.0.0/0"
+          }],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": {"Fn::Join": ["",[{"Ref": "AWS::StackName"},"-csye6225-LBEC2SecurityGroup"]]}
+          }
+        ]
+      }
+    },
     "WebAppSecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
@@ -178,27 +200,15 @@
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
             "FromPort": "22",
             "ToPort": "22",
             "CidrIp": "0.0.0.0/0"
           },
           {
             "IpProtocol": "tcp",
-            "FromPort": "443",
-            "ToPort": "443",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
             "FromPort": "8080",
             "ToPort": "8080",
-            "CidrIp": "0.0.0.0/0"
+            "SourceSecurityGroupId" : { "Ref" : "LBEC2SecurityGroup" }
           }
         ],
         "Tags": [
